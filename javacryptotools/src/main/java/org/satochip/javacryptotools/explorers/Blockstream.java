@@ -31,24 +31,24 @@ public class Blockstream extends Explorer{
         try{
             String base_url = get_url();
             String url = base_url+ "/address/" + addr; //address_url % (base_url, addr)
-            System.out.println("Blockstream explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Blockstream explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Blockstream request content: " + content);
             
             // parse json
             JSONObject reader = new JSONObject(content);
             JSONObject chain_stats  = reader.getJSONObject("chain_stats");
             long funded_txo_sum= chain_stats.getLong("funded_txo_sum");
-            // System.out.println("funded_txo_sum: " + funded_txo_sum);
+            // logger.info("JAVACRYPTOTOOLS: Blockstream funded_txo_sum: " + funded_txo_sum);
             long spent_txo_sum= chain_stats.getLong("spent_txo_sum");
-            // System.out.println("spent_txo_sum: " + spent_txo_sum);
+            // logger.info("JAVACRYPTOTOOLS: Blockstream spent_txo_sum: " + spent_txo_sum);
             double  balance= (double) (funded_txo_sum - spent_txo_sum)/(100000000);
-            // System.out.println("balance: " + spent_txo_sum);
+            // logger.info("JAVACRYPTOTOOLS: Blockstream balance: " + spent_txo_sum);
             return balance;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Blockstream exception in balance: " + e);
             throw new RuntimeException("Blockstream: failed to fetch balance!");
         }   
     }

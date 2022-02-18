@@ -45,11 +45,11 @@ public class Opensea extends NftExplorer{
             String base_url = get_api_url();
             String url= base_url + "asset/"+contract+"/" + tokenID + "/"; // todo? owner_address (optional)
             //String url= base_url + "asset/"+contract+"/" + tokenID + "/" + "?format=json"; // todo? owner_address (optional)
-            System.out.println("Opensea explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Opensea explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Opensea request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Opensea request content: " + content);
             
             // parse json
             JSONObject nftInfo = new JSONObject(content);
@@ -59,7 +59,7 @@ public class Opensea extends NftExplorer{
             }
             return nftInfo;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Opensea exception in balance: " + e);
             throw new RuntimeException("Opensea: failed to fetch NFT info!");
         }    
     }

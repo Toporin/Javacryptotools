@@ -25,11 +25,11 @@ public class Sochain extends Explorer{
     public double get_balance(String addr) {
         
         String url= base_url + "get_address_balance/" + this.coin_symbol + "/" + addr;
-        System.out.println("Sochain explorer  url: " + url);
+        logger.info("JAVACRYPTOTOOLS: Sochain explorer  url: " + url);
         
         HttpsClient client= new HttpsClient(url);
         String content= client.request();
-        System.out.println("Request content: " + content);
+        logger.info("JAVACRYPTOTOOLS: Sochain request content: " + content);
         
         // parse json
         JSONObject reader = new JSONObject(content);
@@ -39,7 +39,7 @@ public class Sochain extends Explorer{
         }
         JSONObject data = reader.getJSONObject("data");
         double balance= data.getDouble("confirmed_balance"); // TODO: unconfirmed_balance?
-        // System.out.println("balance: " + balance);
+        logger.info("JAVACRYPTOTOOLS: balance: " + balance);
         return balance;
     }
     

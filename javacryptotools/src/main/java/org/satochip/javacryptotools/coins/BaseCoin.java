@@ -11,11 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.io.ByteArrayOutputStream;
 //import com.google.common.base.Preconditions;
 
 public abstract class BaseCoin {
-
+    
+    public static final Logger logger = Logger.getLogger("org.satochip.javacryptotools");
+    
     public String coin_symbol;
     public String display_name;
     public boolean enabled;
@@ -39,7 +43,28 @@ public abstract class BaseCoin {
     public Map<String, Integer> xprv_headers;
     public Map<String, Integer> xpub_headers;
     
-
+    public BaseCoin(){
+        logger.setLevel(Level.WARNING);
+    }
+    
+    public void setLoggerLevel(String level){
+        switch(level){
+            case "info":
+                logger.setLevel(Level.INFO);
+                break;
+            case "warning": 
+                logger.setLevel(Level.WARNING);
+                break;
+            default:
+                logger.setLevel(Level.WARNING);
+                break;
+        }
+    }
+    
+    public void setLoggerLevel(Level level){
+        logger.setLevel(level);
+    }
+    
     public String encodePrivkey(byte[] privkey){
 
         //Preconditions.checkArgument(privkey.length == 32, "Private keys must be 32 bytes");

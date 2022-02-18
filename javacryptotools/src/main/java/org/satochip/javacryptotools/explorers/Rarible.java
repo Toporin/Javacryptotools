@@ -44,11 +44,11 @@ public class Rarible extends NftExplorer{
             //String apikey= "";//(String) apikeys.get('API_KEY_RARIBLE');
             String base_url = get_api_url();
             String url= base_url + "nft/items/"+contract+":" + tokenID + "/meta"; 
-            System.out.println("Rarible explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Rarible explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Rarible request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Rarible request content: " + content);
             
             //parse json
             JSONObject nftInfo = new JSONObject(content);
@@ -58,7 +58,7 @@ public class Rarible extends NftExplorer{
             }
             return nftInfo;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Rarible exception in balance: " + e);
             throw new RuntimeException("Rarible: failed to fetch NFT info!");
         }    
     }
@@ -77,11 +77,11 @@ public class Rarible extends NftExplorer{
             //String apikey= "";//(String) apikeys.get('API_KEY_RARIBLE');
             String base_url = get_api_url();
             String url= base_url + "nft/items/"+contract+":" + tokenID + "/meta"; 
-            System.out.println("Rarible explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Rarible explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Rarible request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Rarible request content: " + content);
             
             // parse json
             JSONObject nftInfo = new JSONObject(content);
@@ -109,7 +109,7 @@ public class Rarible extends NftExplorer{
             
             return  nftInfoMap;
         } catch (Exception e){
-            System.out.println("Exception in get_nft_info: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Rarible exception in get_nft_info: " + e);
             return  nftInfoMap; // map has been populated before
         }    
     }

@@ -58,7 +58,7 @@ public class Etherscan extends Explorer{
             String apikey= (String) apikeys.get("API_KEY_ETHERSCAN");
             String base_url = get_api_url();
             String url= base_url + "?module=account&action=balance&address=" + addr + "&tag=latest&apikey=" + apikey;
-            System.out.println("Etherscan explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Etherscan explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
@@ -70,7 +70,7 @@ public class Etherscan extends Explorer{
             // HttpClient client = HttpClients.custom().setDefaultHeaders(headers).build();
             // HttpUriRequest request = RequestBuilder.get().setUri(url).build();
             // String content= client.execute(request);
-            // System.out.println("Request content: " + content);
+            // logger.info("JAVACRYPTOTOOLS: Request content: " + content);
             
             // String user_agent= "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36";
             // OkHttpClient client = new OkHttpClient();
@@ -80,7 +80,7 @@ public class Etherscan extends Explorer{
                         // .build();
             // Response response = client.newCall(request).execute();
             // String content = response.body().string();
-            System.out.println("Request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Etherscan request content: " + content);
             
             // parse json
             JSONObject reader = new JSONObject(content);
@@ -90,10 +90,10 @@ public class Etherscan extends Explorer{
             }
             long result = reader.getLong("result"); // in wei
             double balance= (double) (result)/(Math.pow(10, 18));
-            // System.out.println("balance: " + balance);
+            logger.info("JAVACRYPTOTOOLS: Etherscan balance: " + balance);
             return balance;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in balance: " + e);
             throw new RuntimeException("Etherscan: failed to fetch balance!");
         }
     }
@@ -115,11 +115,11 @@ public class Etherscan extends Explorer{
             String apikey= (String) apikeys.get("API_KEY_ETHERSCAN");
             String base_url = get_api_url();
             String url= base_url + "?module=account&action=tokenbalance&contractaddress="+contract+"&address=" + address + "&tag=latest&apikey=" + apikey;
-            System.out.println("Etherscan explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Etherscan explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Etherscan request content: " + content);
             
             // parse json
             JSONObject reader = new JSONObject(content);
@@ -128,11 +128,11 @@ public class Etherscan extends Explorer{
                 throw new RuntimeException("Etherscan: Failed to fetch balance!");
             }
             long result = reader.getLong("result"); //
-            // System.out.println("balance: " + result);
+            logger.info("JAVACRYPTOTOOLS: Etherscan balance: " + result);
             //double balance= (double) (result)/(Math.pow(10, 18)); // most ERC20 use 18 decimals but etherscan does not offer reliable way to find out...
             return result;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in balance: " + e);
             throw new RuntimeException("Etherscan: failed to fetch Ethereum token balance!");
         }    
     }
@@ -152,11 +152,11 @@ public class Etherscan extends Explorer{
             String apikey= (String) apikeys.get("API_KEY_ETHPLORER");
             String base_url = "https://api.ethplorer.io";
             String url=  base_url + "/getTokenInfo/" + contract + "?apiKey=" + apikey;
-            System.out.println("Ethplorer explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Ethplorer explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Etherscan request content: " + content);
             
             // parse json
             JSONObject reader = new JSONObject(content);
@@ -172,12 +172,12 @@ public class Etherscan extends Explorer{
             tokenInfo.put("name", name);
             tokenInfo.put("symbol", symbol);
             tokenInfo.put("decimals", decimals);
-            // System.out.println("name: " + name);
-            // System.out.println("symbol: " + symbol);
-            // System.out.println("decimals: " + decimals);
+            logger.info("JAVACRYPTOTOOLS: Etherscan name: " + name);
+            logger.info("JAVACRYPTOTOOLS: Etherscan symbol: " + symbol);
+            logger.info("JAVACRYPTOTOOLS: Etherscan decimals: " + decimals);
             return tokenInfo;
         } catch (Exception e){
-            System.out.println("Exception in get_token_info: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in get_token_info: " + e);
             return tokenInfo;
         }  
     }

@@ -5,11 +5,16 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.io.*;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 public class HttpsClient{
 	
+    protected static final Logger logger = Logger.getLogger("org.satochip.javacryptotools");
+    
     public String https_url;
     
    // public static void main(String[] args)
@@ -74,19 +79,16 @@ public class HttpsClient{
                 
             try {
                     
-                System.out.println("Response Code : " + con.getResponseCode());
-                System.out.println("Cipher Suite : " + con.getCipherSuite());
-                System.out.println("\n");
+                logger.info("JAVACRYPTOTOOLS: HttpsClient: Response Code : " + con.getResponseCode());
+                logger.info("JAVACRYPTOTOOLS: HttpsClient: Cipher Suite : " + con.getCipherSuite());
+                logger.info("JAVACRYPTOTOOLS: HttpsClient: \n");
                             
                 Certificate[] certs = con.getServerCertificates();
                 for(Certificate cert : certs){
-                    System.out.println("Cert Type : " + cert.getType());
-                    System.out.println("Cert Hash Code : " + cert.hashCode());
-                    System.out.println("Cert Public Key Algorithm : " 
-                                                + cert.getPublicKey().getAlgorithm());
-                    System.out.println("Cert Public Key Format : " 
-                                                + cert.getPublicKey().getFormat());
-                    System.out.println("\n");
+                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Type : " + cert.getType());
+                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Hash Code : " + cert.hashCode());
+                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Public Key Algorithm : " + cert.getPublicKey().getAlgorithm());
+                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Public Key Format : " + cert.getPublicKey().getFormat());
                 }
                         
             } catch (SSLPeerUnverifiedException e) {
@@ -104,7 +106,7 @@ public class HttpsClient{
         if(con!=null){
             try {
                
-               System.out.println("****** Content of the URL ********");			
+               logger.info("JAVACRYPTOTOOLS: HttpsClient: ****** Content of the URL ********");			
                BufferedReader br = 
                 new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -112,11 +114,12 @@ public class HttpsClient{
                String input;
                         
                while ((input = br.readLine()) != null){
-                  System.out.println(input);
+                  logger.info("JAVACRYPTOTOOLS: HttpsClient: " + input);
                   content+=input;
                }
                br.close();
-                        
+               logger.info("JAVACRYPTOTOOLS: HttpsClient: ****** Content end reached ********");		
+               
             } catch (IOException e) {
                e.printStackTrace();
             }

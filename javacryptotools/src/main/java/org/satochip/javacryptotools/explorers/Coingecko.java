@@ -51,11 +51,11 @@ public class Coingecko extends PriceExplorer{
         try{
             String base_url = get_api_url();
             String url= base_url + "simple/price?ids=" + coin + "&vs_currencies=" + other_coin;
-            System.out.println("Coingecko explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Coingecko request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
             
             // parse json
             JSONObject priceInfo = new JSONObject(content);
@@ -81,11 +81,11 @@ public class Coingecko extends PriceExplorer{
         try{
             String base_url = get_api_url();
             String url= base_url + "simple/token_price/" + coin + "?contract_addresses="+contract + "&vs_currencies=" + other_coin;
-            System.out.println("Coingecko explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Coingecko request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
             
             // parse json
             JSONObject priceInfo = new JSONObject(content);

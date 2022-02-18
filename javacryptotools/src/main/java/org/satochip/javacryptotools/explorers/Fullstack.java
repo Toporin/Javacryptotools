@@ -43,11 +43,11 @@ public class Fullstack extends Explorer{
         try{
             String base_url= get_url();
             String url= base_url + "/electrumx/balance/" + addr;
-            System.out.println("Fullstack explorer  url: " + url);
+            logger.info("JAVACRYPTOTOOLS: Fullstack explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            System.out.println("Request content: " + content);
+            logger.info("JAVACRYPTOTOOLS: Fullstack request content: " + content);
             
             // parse json
             JSONObject reader = new JSONObject(content);
@@ -58,10 +58,10 @@ public class Fullstack extends Explorer{
             JSONObject data = reader.getJSONObject("balance");
             long confirmed= data.optLong("confirmed", -1); // in satoshi // TODO: unconfirmed?
             double balance= (double) (confirmed)/(100000000);
-            // System.out.println("balance: " + balance);
+            logger.info("JAVACRYPTOTOOLS: Fullstack balance: " + balance);
             return balance;
         } catch (Exception e){
-            System.out.println("Exception in balance: " + e);
+            logger.warning("JAVACRYPTOTOOLS: Fullstack exception in balance: " + e);
             throw new RuntimeException("Fullstack: failed to fetch balance!");
         }   
     }
