@@ -15,7 +15,6 @@ public class Rarible extends NftExplorer{
     
     public Rarible(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Rarible in constructor coin_symbol: " + this.coin_symbol);
     }
     
     public String get_api_url(){

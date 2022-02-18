@@ -70,7 +70,6 @@ public class Bitcoin extends BaseCoin {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
     
-        System.out.println("BITCOIN DEBUG coin_symbol:" + coin_symbol);
         token_supported= false;
         nft_supported= false;
         explorer= new Blockstream(coin_symbol, apikeys);

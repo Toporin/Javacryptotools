@@ -15,7 +15,6 @@ public class Fullstack extends Explorer{
         
     public Fullstack(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Fullstack in constructor coin_symbol: " + this.coin_symbol);
     }
     
     public String get_url(){
@@ -59,7 +58,7 @@ public class Fullstack extends Explorer{
             JSONObject data = reader.getJSONObject("balance");
             long confirmed= data.optLong("confirmed", -1); // in satoshi // TODO: unconfirmed?
             double balance= (double) (confirmed)/(100000000);
-            System.out.println("balance: " + balance);
+            // System.out.println("balance: " + balance);
             return balance;
         } catch (Exception e){
             System.out.println("Exception in balance: " + e);

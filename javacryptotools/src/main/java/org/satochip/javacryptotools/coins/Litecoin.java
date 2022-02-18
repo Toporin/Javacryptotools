@@ -72,7 +72,6 @@ public class Litecoin extends BaseCoin {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
         
-        System.out.println("LITECOIN DEBUG coin_symbol:" + coin_symbol);
         token_supported= false;
         nft_supported= false;
         explorer= new Sochain(coin_symbol, apikeys);

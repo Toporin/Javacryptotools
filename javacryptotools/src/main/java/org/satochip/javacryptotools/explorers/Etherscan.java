@@ -20,7 +20,6 @@ public class Etherscan extends Explorer{
     
     public Etherscan(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Etherscan in constructor coin_symbol: " + this.coin_symbol);
     }
     
     public String get_api_url(){
@@ -55,7 +54,7 @@ public class Etherscan extends Explorer{
                 
            */
         try{
-            // TODO: add to apikeys
+            // add to apikeys
             String apikey= (String) apikeys.get("API_KEY_ETHERSCAN");
             String base_url = get_api_url();
             String url= base_url + "?module=account&action=balance&address=" + addr + "&tag=latest&apikey=" + apikey;
@@ -91,7 +90,7 @@ public class Etherscan extends Explorer{
             }
             long result = reader.getLong("result"); // in wei
             double balance= (double) (result)/(Math.pow(10, 18));
-            System.out.println("balance: " + balance);
+            // System.out.println("balance: " + balance);
             return balance;
         } catch (Exception e){
             System.out.println("Exception in balance: " + e);
@@ -129,7 +128,7 @@ public class Etherscan extends Explorer{
                 throw new RuntimeException("Etherscan: Failed to fetch balance!");
             }
             long result = reader.getLong("result"); //
-            System.out.println("balance: " + result);
+            // System.out.println("balance: " + result);
             //double balance= (double) (result)/(Math.pow(10, 18)); // most ERC20 use 18 decimals but etherscan does not offer reliable way to find out...
             return result;
         } catch (Exception e){
@@ -173,9 +172,9 @@ public class Etherscan extends Explorer{
             tokenInfo.put("name", name);
             tokenInfo.put("symbol", symbol);
             tokenInfo.put("decimals", decimals);
-            System.out.println("name: " + name);
-            System.out.println("symbol: " + symbol);
-            System.out.println("decimals: " + decimals);
+            // System.out.println("name: " + name);
+            // System.out.println("symbol: " + symbol);
+            // System.out.println("decimals: " + decimals);
             return tokenInfo;
         } catch (Exception e){
             System.out.println("Exception in get_token_info: " + e);

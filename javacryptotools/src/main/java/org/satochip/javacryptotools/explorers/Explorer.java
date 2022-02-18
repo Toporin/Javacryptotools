@@ -11,7 +11,6 @@ public abstract class Explorer extends BaseExplorer {
     
     public Explorer(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Explorer in constructor coin_symbol: " + this.coin_symbol);
     }
     
     public abstract String get_address_weburl(String addr);

@@ -21,7 +21,6 @@ public class Coingecko extends PriceExplorer{
         } else {
             this.isTestnet=false;
         }
-        System.out.println("Coingecko in constructor");
     }
     
     public String get_api_url(){

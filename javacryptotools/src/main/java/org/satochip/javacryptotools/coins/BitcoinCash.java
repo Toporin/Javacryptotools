@@ -79,7 +79,6 @@ public class BitcoinCash extends BaseCoin {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
     
-        System.out.println("BITCOIN DEBUG coin_symbol:" + coin_symbol);
         token_supported= false;
         nft_supported= false;
         explorer= new Fullstack(coin_symbol, apikeys);
@@ -94,7 +93,6 @@ public class BitcoinCash extends BaseCoin {
     public String pubToAddress(byte[] pubkey){
         
         String legacy= pubToLegacyAddress(pubkey);
-        System.out.println("BITCOIN CASH DEBUG legacy:" + legacy);
         // CashAddress CASH = CashAddress.CASH;
         // String cashAddress= CASH.encodeCashAdrressByLegacy(legacy);
         
@@ -123,12 +121,8 @@ public class BitcoinCash extends BaseCoin {
 
         byte[] pubkeyHash = Utils.sha256hash160(bytes);
         byte[] pack= CashAddress.packAddressData(pubkeyHash, cashAddressTypePubkey);
-        String cashAddress= CashAddress.encodeCashAddress(cashAddrPrefix, pack);
-                
-        System.out.println("BITCOIN CASH DEBUG cashAddress:" + cashAddress);
+        String cashAddress= CashAddress.encodeCashAddress(cashAddrPrefix, pack);  
         return cashAddress;
-        
     }
     
-
 }

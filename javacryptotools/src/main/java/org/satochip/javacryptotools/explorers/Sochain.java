@@ -15,7 +15,6 @@ public class Sochain extends Explorer{
     
     public Sochain(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Sochain in constructor coin_symbol: " + this.coin_symbol);
     }
 
     public String get_address_weburl(String addr){        
@@ -40,7 +39,7 @@ public class Sochain extends Explorer{
         }
         JSONObject data = reader.getJSONObject("data");
         double balance= data.getDouble("confirmed_balance"); // TODO: unconfirmed_balance?
-        System.out.println("balance: " + balance);
+        // System.out.println("balance: " + balance);
         return balance;
     }
     

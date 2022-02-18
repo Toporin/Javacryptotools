@@ -14,7 +14,6 @@ public class Opensea extends NftExplorer{
     
     public Opensea(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
-        System.out.println("Opensea in constructor coin_symbol: " + this.coin_symbol);
     }
     
     public String get_api_url(){

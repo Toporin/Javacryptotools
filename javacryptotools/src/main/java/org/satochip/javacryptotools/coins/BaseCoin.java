@@ -177,7 +177,6 @@ public abstract class BaseCoin {
     */
     
     public double getBalance(String addr){
-        System.out.println("In BaseCoin get_balance addr: " + addr);
         if (explorer!=null){
             return explorer.get_balance(addr);
         } else {
@@ -186,7 +185,6 @@ public abstract class BaseCoin {
     }
     
     public String getAddressWeburl(String addr){
-        System.out.println("In BaseCoin getAddressWeburl addr: " + addr);
         if (explorer!=null){
             return explorer.get_address_weburl(addr);
         } else {
