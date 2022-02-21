@@ -37,9 +37,11 @@ Explorer classes use API from the following services:
 
 Remark: some explorer APIs require an API key to work correctly. API keys are provided through a hashmap<string:key, string:value>.
 
-## Usage
+## Build and Usage
 
-Currently, you can import the different libraries in your Gradle project by placing the .jar library in a folder (e.g. 'libs')
+You can build the jar file with ```./gradlew clean build```
+
+You can import the different libraries in your Gradle project by placing the .jar library in a folder (e.g. 'libs')
 and by adding the following line in the *dependencies* section of your *build.gradle* file:
 
 ```api files('libs/javacryptotools-0.0.3.jar')```
