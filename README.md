@@ -27,13 +27,15 @@ Each coin can also have various *Explorer* objects attached to it. These explore
 * PriceExplorer: provides info such as exchange rateswith common (fiat) currencies
 
 Explorer classes use API from the following services:
-* Blockstream
-* Sochain
-* Fullstack
-* Etherscan
-* Rarible
-* Opensea
-* Coingecko
+* [Blockstream](https://blockstream.com/)
+* Sochain](https://sochain.com/)
+* Fullstack](https://fullstack.cash/)
+* Etherscan](https://etherscan.io/)
+* Rarible](https://rarible.com/)
+* Opensea](https://opensea.io/)
+* Coingecko](https://www.coingecko.com/)
+
+These APIs are used to get info such as balances, NFT name, description and image preview.
 
 Remark: some explorer APIs require an API key to work correctly. API keys are provided through a hashmap<string:key, string:value>.
 
