@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 //Docs: https://chain.so/api
 
-public class Sochain extends Explorer{
+public class Sochain extends BaseExplorer implements Explorer{
     
     public static final String base_url = "https://chain.so/api/v2/";
     
@@ -43,8 +43,8 @@ public class Sochain extends Explorer{
         return balance;
     }
     
-    public long get_token_balance(String address, String contract){
-        return (long)-1;
+    public double get_token_balance(String address, String contract){
+        return (double)-1;
     }
     
     public HashMap<String, String> get_token_info(String contract){

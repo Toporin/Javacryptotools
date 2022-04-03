@@ -26,7 +26,7 @@ public class UnsupportedCoin extends BaseCoin {
         wif_script_types.put("p2wsh-p2sh", 7);
         
         if (is_testnet){
-            coin_symbol = "???";
+            coin_symbol = "?";
             display_name = "Unsupported Testnet";
 
             //explorer = blockstream; //blockchain

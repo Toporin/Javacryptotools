@@ -11,7 +11,7 @@ import java.util.HashMap;
 // https://docs.rarible.org/api-reference/
 // https://ethereum-api.rarible.org/v0.1/doc#operation/getNftItemMetaById
 
-public class Rarible extends NftExplorer{
+public class Rarible extends BaseExplorer implements NftExplorer{
     
     public Rarible(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
@@ -36,6 +36,7 @@ public class Rarible extends NftExplorer{
         return web_url;
     }
     
+    // DEPRECATED
     public JSONObject get_nft_info_json(String contract, String tokenID){
         /*
             https://ethereum-api.rarible.org/v0.1/nft/items/{itemId}/meta
@@ -93,16 +94,18 @@ public class Rarible extends NftExplorer{
             String description = nftInfo.optString("description", "");
             JSONObject imageInfo= nftInfo.getJSONObject("image");
             String imageUrl= "";
+            String imageUrlLarge= ""; 
             if (imageInfo != null){
                 JSONObject imageUrls= imageInfo.getJSONObject("url");
                 if (imageUrls !=null){
+                    imageUrlLarge= imageUrls.optString("ORIGINAL", "");
                     imageUrl= imageUrls.optString("PREVIEW", "");
                 }
             }
             nftInfoMap.put("nftName", name);
             nftInfoMap.put("nftDescription", description);
             nftInfoMap.put("nftImageUrl", imageUrl);
-            
+            nftInfoMap.put("nftImageUrlLarge", imageUrlLarge);
             // rarible link
             String nftExplorerLink= get_nft_weburl(contract, tokenID);
             nftInfoMap.put("nftExplorerLink", nftExplorerLink);

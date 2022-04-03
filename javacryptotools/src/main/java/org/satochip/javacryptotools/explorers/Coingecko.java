@@ -10,7 +10,7 @@ import java.util.HashMap;
 // https://www.coingecko.com/en/api/documentation
 // !! coingecko uses non-standard coin symbol ('id') to reference coins in its API (e.g. "bitcoin", "bitcoin-cash", "ethereum"...)
 
-public class Coingecko extends PriceExplorer{
+public class Coingecko extends BaseExplorer implements PriceExplorer{
     
     private final boolean isTestnet;
     

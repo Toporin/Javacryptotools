@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Blockstream extends Explorer{
+public class Blockstream extends BaseExplorer implements Explorer{
     
     public Blockstream(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
@@ -53,8 +53,8 @@ public class Blockstream extends Explorer{
         }   
     }
     
-    public long get_token_balance(String address, String contract){
-        return (long)-1;
+    public double get_token_balance(String address, String contract){
+        return (double)-1;
     }
     public HashMap<String, String> get_token_info(String contract){
         return new HashMap<String, String>();

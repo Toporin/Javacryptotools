@@ -11,7 +11,7 @@ import java.util.HashMap;
 // see also https://api.fullstack.cash/ 
 // see also https://tapi.fullstack.cash/
 
-public class Fullstack extends Explorer{
+public class Fullstack extends BaseExplorer implements Explorer{
         
     public Fullstack(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
@@ -66,8 +66,8 @@ public class Fullstack extends Explorer{
         }   
     }
     
-    public long get_token_balance(String address, String contract){
-        return (long)-1;
+    public double get_token_balance(String address, String contract){
+        return (double)-1;
     }
     
     public HashMap<String, String> get_token_info(String contract){

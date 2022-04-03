@@ -16,8 +16,10 @@ public final class Constants {
     public static final int LTC= 0x80000002;
     public static final int DOGE= 0x80000003;
     public static final int DASH= 0x80000005;
+    public static final int XCP= 0x80000009;
     public static final int ETH= 0x8000003c;
     public static final int ETC= 0x8000003d;
+    public static final int RBTC= 0x80000089;
     public static final int BCH= 0x80000091;
     public static final int BSC= 0x80000207;
     
@@ -25,15 +27,16 @@ public final class Constants {
     public static final Map<String, Integer> MAP_SLIP44_BY_SYMBOL;
     static {
         Map<String, Integer> tmpmap= new HashMap<String, Integer>();
-        tmpmap.put("BTC", 0x80000000);
-        tmpmap.put("LTC", 0x80000002);
-        tmpmap.put("DOGE", 0x80000003);
-        tmpmap.put("DASH", 0x80000005);
-        tmpmap.put("ETH", 0x8000003c);
-        tmpmap.put("ETC", 0x8000003d);
-        tmpmap.put("RBTC", 0x80000089);
-        tmpmap.put("BCH", 0x80000091);
-        tmpmap.put("BSC", 0x80000207);
+        tmpmap.put("BTC", BTC);
+        tmpmap.put("LTC", LTC);
+        tmpmap.put("DOGE", DOGE);
+        tmpmap.put("DASH", DASH);
+        tmpmap.put("XCP", XCP);
+        tmpmap.put("ETH", ETH);
+        tmpmap.put("ETC", ETC);
+        tmpmap.put("RBTC", RBTC);
+        tmpmap.put("BCH", BCH);
+        tmpmap.put("BSC", BSC);
         MAP_SLIP44_BY_SYMBOL = Collections.unmodifiableMap(tmpmap);
     }
   
@@ -41,19 +44,20 @@ public final class Constants {
     public static final Map<Integer, String> MAP_SYMBOL_BY_SLIP44;
     static {
         Map<Integer, String> tmpmap= new HashMap<Integer, String>();
-        tmpmap.put(0x80000000, "BTC");
-        tmpmap.put(0x80000002, "LTC");
-        tmpmap.put(0x80000003, "DOGE");
-        tmpmap.put(0x80000005, "DASH");
-        tmpmap.put(0x8000003c, "ETH");
-        tmpmap.put(0x8000003d, "ETC");
-        tmpmap.put(0x80000089, "RBTC");
-        tmpmap.put(0x80000091, "BCH");
-        tmpmap.put(0x80000207, "BSC");
+        tmpmap.put(BTC, "BTC");
+        tmpmap.put(LTC, "LTC");
+        tmpmap.put(DOGE, "DOGE");
+        tmpmap.put(DASH, "DASH");
+        tmpmap.put(XCP, "XCP");
+        tmpmap.put(ETH, "ETH");
+        tmpmap.put(ETC, "ETC");
+        tmpmap.put(RBTC, "RBTC");
+        tmpmap.put(BCH, "BCH");
+        tmpmap.put(BSC, "BSC");
         MAP_SYMBOL_BY_SLIP44 = Collections.unmodifiableMap(tmpmap);
     }
     
-    public static final String[] SUPPORTS_TOKEN = {"ETH", "ETC", "BSC"};
+    public static final String[] SUPPORTS_TOKEN = {"XCP", "ETH", "ETC", "BSC"};
     public static final Set<String> SUPPORTS_TOKEN_SET = new HashSet<>(Arrays.asList(SUPPORTS_TOKEN));
     
 }

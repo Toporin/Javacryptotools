@@ -217,11 +217,11 @@ public abstract class BaseCoin {
         }
     }
     
-    public long getTokenBalance(String addr, String contract){
+    public double getTokenBalance(String addr, String contract){
         if (explorer!=null){ 
             return explorer.get_token_balance(addr, contract);
         } else {
-            return (long)-1;
+            return (double)-1;
         }
     }
     

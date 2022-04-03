@@ -10,7 +10,7 @@ import java.util.HashMap;
 // https://docs.opensea.io/reference/retrieving-a-single-asset
 
 
-public class Opensea extends NftExplorer{
+public class Opensea extends BaseExplorer implements NftExplorer{
     
     public Opensea(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
