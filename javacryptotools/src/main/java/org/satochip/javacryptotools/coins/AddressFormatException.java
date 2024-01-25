@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 @SuppressWarnings("serial")
 public class AddressFormatException extends IllegalArgumentException {

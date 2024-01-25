@@ -3,6 +3,7 @@ package org.satochip.javacryptotools.explorers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.satochip.javacryptotools.coins.Asset;
 
 // import okhttp3.MediaType;
 // import okhttp3.OkHttpClient;
@@ -10,8 +11,10 @@ import org.json.JSONObject;
 // import okhttp3.RequestBody;
 // import okhttp3.Response; 
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 
 public class Etherscan extends BaseExplorer implements Explorer{
@@ -21,7 +24,10 @@ public class Etherscan extends BaseExplorer implements Explorer{
     public Etherscan(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
     }
-    
+    public Etherscan(String coin_symbol, Map<String, String> apikeys, Level level){
+        super(coin_symbol, apikeys, level);
+    }
+
     public String get_api_url(){
         if (this.coin_symbol.equals("ETH")){
             return "https://api.etherscan.io/api";
@@ -97,7 +103,11 @@ public class Etherscan extends BaseExplorer implements Explorer{
             throw new RuntimeException("Etherscan: failed to fetch balance!");
         }
     }
-    
+
+    public List<Asset> get_asset_list(String address){
+        return null;
+    }
+
     public double get_token_balance(String address, String contract){
 
         /* 

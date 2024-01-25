@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.primitives.*;

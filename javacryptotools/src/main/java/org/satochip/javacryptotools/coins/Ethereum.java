@@ -1,17 +1,24 @@
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import org.satochip.javacryptotools.explorers.*;
 
 import org.bouncycastle.jcajce.provider.digest.Keccak;
 import org.bouncycastle.util.encoders.Hex;
+import org.satochip.javacryptotools.utils.Hash;
+import org.satochip.javacryptotools.utils.Numeric;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class Ethereum extends BaseCoin {
 
     public Ethereum(boolean is_testnet, Map<String, String> apikeys){
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public Ethereum(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
+        super(logLevel);
 
         is_testnet= is_testnet;
         apikeys= apikeys;
@@ -33,7 +40,6 @@ public class Ethereum extends BaseCoin {
             coin_symbol = "ROP";
             display_name = "Ropsten Testnet";
 
-            //explorer = blockstream; //blockchain
             magicbyte = 111;
             script_magicbyte = 196;
             segwit_hrp = "tb";
@@ -54,7 +60,7 @@ public class Ethereum extends BaseCoin {
         } else{
             coin_symbol = "ETH";
             display_name = "Ethereum";
-            //explorer = blockstream; //blockchain
+
             magicbyte = 0;
             script_magicbyte = 5;
             segwit_hrp = "bc";
@@ -73,12 +79,13 @@ public class Ethereum extends BaseCoin {
             xpub_headers.put("p2wsh", 0x2aa7ed3);
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
-    
-        explorer= new Etherscan(coin_symbol, apikeys);
+
+        //explorer= new Etherscan(coin_symbol, apikeys);
+        explorer= new Ethplorer(coin_symbol, apikeys, logLevel);
         token_supported= true;
         nft_supported= true;
         //nftExplorer= new Opensea(coin_symbol, apikeys);
-        nftExplorer= new Rarible(coin_symbol, apikeys);
+        nftExplorer= new Rarible(coin_symbol, apikeys, logLevel);
         if (is_testnet){
             priceExplorer= new Coingecko("testnet", apikeys);
         }else{
@@ -107,4 +114,30 @@ public class Ethereum extends BaseCoin {
         return address;
     }
 
+    /**
+     * Checksum address encoding as per <a
+     * href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md">EIP-55</a>.
+     * Based on https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java
+     *
+     * @param address a valid hex encoded address
+     * @return hex encoded checksum address
+     */
+    public static String toChecksumAddress(String address) {
+        String lowercaseAddress = Numeric.cleanHexPrefix(address).toLowerCase();
+        String addressHash = Numeric.cleanHexPrefix(Hash.sha3String(lowercaseAddress));
+
+        StringBuilder result = new StringBuilder(lowercaseAddress.length() + 2);
+
+        result.append("0x");
+
+        for (int i = 0; i < lowercaseAddress.length(); i++) {
+            if (Integer.parseInt(String.valueOf(addressHash.charAt(i)), 16) >= 8) {
+                result.append(String.valueOf(lowercaseAddress.charAt(i)).toUpperCase());
+            } else {
+                result.append(lowercaseAddress.charAt(i));
+            }
+        }
+
+        return result.toString();
+    }
 }

@@ -5,6 +5,8 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.io.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -16,7 +18,8 @@ public class HttpsClient{
     protected static final Logger logger = Logger.getLogger("org.satochip.javacryptotools");
     
     public String https_url;
-    
+    public HashMap<String,String> headers = null;
+
    // public static void main(String[] args)
    // {
         // new HttpsClient().testIt();
@@ -24,6 +27,10 @@ public class HttpsClient{
 	
     public HttpsClient(String https_url){
         this.https_url= https_url;
+    }
+    public HttpsClient(String https_url, HashMap<String,String> headers){
+        this.https_url= https_url;
+        this.headers= headers;
     }
     
     public String request(){
@@ -34,9 +41,18 @@ public class HttpsClient{
 
              url = new URL(this.https_url);
              HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                
-             //dumpl all cert info
-             print_https_cert(con);
+
+             if(headers!=null){
+                 for (Map.Entry<String, String> entry : headers.entrySet()) {
+                     String key = entry.getKey();
+                     String value = entry.getValue();
+                     con.setRequestProperty(key, value);
+                     logger.warning("Using header pair: key: " +key + " value:" + value);
+                 }
+             }
+
+             //dump all cert info
+             //print_https_cert(con);
                 
              //dump all the content
              content= print_content(con);

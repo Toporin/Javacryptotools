@@ -1,9 +1,10 @@
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import org.satochip.javacryptotools.explorers.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class BitcoinCash extends BaseCoin {
     
@@ -11,9 +12,12 @@ public class BitcoinCash extends BaseCoin {
     public String simpleledgerPrefix;
     public static final byte cashAddressTypePubkey= 0; 
     public static final byte cashAddressTypeScript=1;
-    
+
     public BitcoinCash(boolean is_testnet, Map<String, String> apikeys){
-        
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public BitcoinCash(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
+        super(logLevel);
         is_testnet= is_testnet;
         apikeys= apikeys;
 
@@ -81,11 +85,11 @@ public class BitcoinCash extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorer= new Fullstack(coin_symbol, apikeys);
+        explorer= new Fullstack(coin_symbol, apikeys, logLevel);
         if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys);
+            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
         }else{
-            priceExplorer= new Coingecko("bitcoin-cash", apikeys);
+            priceExplorer= new Coingecko("bitcoin-cash", apikeys, logLevel);
         }
     }
     

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import javax.annotation.Nullable;
 

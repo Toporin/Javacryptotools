@@ -3,7 +3,10 @@ package org.satochip.javacryptotools.explorers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.satochip.javacryptotools.coins.Asset;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -35,7 +38,11 @@ public class Opensea extends BaseExplorer implements NftExplorer{
         String web_url="https://opensea.io/assets/" + contract  + "/" + tokenID;
         return web_url;
     }
-    
+
+    public List<Asset> get_nft_list(String address){
+        return Collections.emptyList(); // todo
+    }
+
     public JSONObject get_nft_info_json(String contract, String tokenID){
         /*
         https://api.opensea.io/api/v1/asset/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/1/?account_address=0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb

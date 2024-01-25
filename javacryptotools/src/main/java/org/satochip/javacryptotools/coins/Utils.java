@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 // https://www.coingecko.com/en/api/documentation
 // !! coingecko uses non-standard coin symbol ('id') to reference coins in its API (e.g. "bitcoin", "bitcoin-cash", "ethereum"...)
@@ -15,7 +16,10 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
     private final boolean isTestnet;
     
     public Coingecko(String coin_symbol, Map<String, String> apikeys){
-        super(coin_symbol, apikeys);
+        this(coin_symbol, apikeys, Level.WARNING);
+    }
+    public Coingecko(String coin_symbol, Map<String, String> apikeys, Level logLevel){
+        super(coin_symbol, apikeys, logLevel);
         if (coin_symbol.equals("testnet")){
             this.isTestnet=true;
         } else {

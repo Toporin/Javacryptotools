@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 // based on https://github.com/pokkst/bitcoincashj/blob/master/core/src/main/java/org/bitcoinj/core/CashAddressHelper.java
 //import org.apache.commons.lang3.tuple.ImmutablePair;

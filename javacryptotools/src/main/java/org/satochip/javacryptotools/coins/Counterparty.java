@@ -1,13 +1,18 @@
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import org.satochip.javacryptotools.explorers.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class Counterparty extends BaseCoin {
 
     public Counterparty(boolean is_testnet, Map<String, String> apikeys){
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public Counterparty(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
+        super(logLevel);
 
         is_testnet= is_testnet;
         apikeys= apikeys;
@@ -35,7 +40,7 @@ public class Counterparty extends BaseCoin {
     
         token_supported= true;
         nft_supported= true;
-        explorer= new Xchain(coin_symbol, apikeys);
+        explorer= new Xchain(coin_symbol, apikeys, logLevel);
         nftExplorer= new Xchain(coin_symbol, apikeys);
         if (is_testnet){
             priceExplorer= new Coingecko("testnet", apikeys);

@@ -12,8 +12,16 @@ import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
  
 import java.io.ByteArrayOutputStream;
+import java.util.logging.Level;
 
 import org.satochip.javacryptotools.*;
+import org.satochip.javacryptotools.coins.Base58;
+import org.satochip.javacryptotools.coins.BaseCoin;
+import org.satochip.javacryptotools.coins.Bitcoin;
+import org.satochip.javacryptotools.coins.BitcoinCash;
+import org.satochip.javacryptotools.coins.Litecoin;
+import org.satochip.javacryptotools.coins.Ethereum;
+
 import static org.satochip.javacryptotools.coins.Constants.*;
 
 // test functions specifically used by SatodimeTool
@@ -276,7 +284,7 @@ class CoinTest {
         ADDRESS_SEGWIT= ADDRESS_SEGWIT_BCH;
         PRIVKEY_WIF= PRIVKEY_WIF_BCH;
         
-        BaseCoin coin = new BitcoinCash(isTestnet, null);
+        BaseCoin coin = new BitcoinCash(isTestnet, null, Level.WARNING);
         System.out.println(coin.display_name+ " - test_address - START!");        
         assertEquals("Bitcoin Cash", coin.display_name);
         assertEquals("BCH", coin.coin_symbol);
@@ -328,7 +336,7 @@ class CoinTest {
         ADDRESS_SEGWIT= ADDRESS_SEGWIT_ETH;
         PRIVKEY_WIF= PRIVKEY_WIF_ETH;
         
-        BaseCoin coin = new Ethereum(isTestnet, null);
+        BaseCoin coin = new Ethereum(isTestnet, null, Level.WARNING);
         System.out.println(coin.display_name+ " - test_address - START!");        
         assertEquals("Ethereum", coin.display_name);
         assertEquals("ETH", coin.coin_symbol);
@@ -384,7 +392,7 @@ class CoinTest {
         
         byte[] decoded;
         try{
-            decoded= Base58.decode(private_key_WIF); 
+            decoded= Base58.decode(private_key_WIF);
             System.out.println("privkey decoded= " + Hex.toHexString(decoded));
         } catch (Exception e){
             System.out.println("Exception in wif2priv(): "+ e);

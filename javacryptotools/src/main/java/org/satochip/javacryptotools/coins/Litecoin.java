@@ -1,4 +1,4 @@
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
 import org.satochip.javacryptotools.explorers.*;
 

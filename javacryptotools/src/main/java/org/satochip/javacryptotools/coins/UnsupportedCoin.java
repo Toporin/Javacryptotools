@@ -1,5 +1,6 @@
-package org.satochip.javacryptotools;
+package org.satochip.javacryptotools.coins;
 
+import org.satochip.javacryptotools.coins.AddressFormatException;
 import org.satochip.javacryptotools.explorers.*;
 
 import java.util.Map;
@@ -89,7 +90,7 @@ public class UnsupportedCoin extends BaseCoin {
         return "(unsupported)";
     } 
     
-    public String pubToSegwitAddress(byte[] pubkey)  throws AddressFormatException{
+    public String pubToSegwitAddress(byte[] pubkey)  throws AddressFormatException {
         return "(unsupported)";
     }
 

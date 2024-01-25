@@ -3,9 +3,12 @@ package org.satochip.javacryptotools.explorers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.satochip.javacryptotools.coins.Asset;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 //Docs: https://api.fullstack.cash/docs/
 // see also https://api.fullstack.cash/ 
@@ -14,7 +17,10 @@ import java.util.HashMap;
 public class Fullstack extends BaseExplorer implements Explorer{
         
     public Fullstack(String coin_symbol, Map<String, String> apikeys){
-        super(coin_symbol, apikeys);
+        this(coin_symbol, apikeys, Level.WARNING);
+    }
+    public Fullstack(String coin_symbol, Map<String, String> apikeys, Level logLevel){
+        super(coin_symbol, apikeys, logLevel);
     }
     
     public String get_url(){
@@ -65,7 +71,11 @@ public class Fullstack extends BaseExplorer implements Explorer{
             throw new RuntimeException("Fullstack: failed to fetch balance!");
         }   
     }
-    
+
+    public List<Asset> get_asset_list(String address){
+        return null;
+    }
+
     public double get_token_balance(String address, String contract){
         return (double)-1;
     }
