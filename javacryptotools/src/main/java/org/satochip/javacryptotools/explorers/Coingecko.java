@@ -4,14 +4,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
 
 // https://www.coingecko.com/en/api/documentation
 // !! coingecko uses non-standard coin symbol ('id') to reference coins in its API (e.g. "bitcoin", "bitcoin-cash", "ethereum"...)
+// also it does not support fiat to fiat exchange rate (eg EUR/USD)!
 
 public class Coingecko extends BaseExplorer implements PriceExplorer{
+
+    private static final Map<String, String> symbolToId;
+    private static final Map<String, String> nameToId;
+    static {
+        Map<String, String> map1 = new HashMap<String, String>();
+        map1.put("BTC", "bitcoin");
+        map1.put("LTC", "litecoin");
+        map1.put("BCH", "bitcoin-cash");
+        map1.put("ETH", "ethereum");
+        map1.put("ETC", "ethereum-classic");
+        map1.put("XCP", "counterparty");
+        symbolToId = Collections.unmodifiableMap(map1);
+
+        Map<String, String> map2 = new HashMap<String, String>();
+        map2.put("BTC", "btc");
+        map2.put("ETH", "eth");
+        map2.put("EUR", "eur");
+        map2.put("USD", "usd");
+        nameToId = Collections.unmodifiableMap(map2);
+    }
     
     private final boolean isTestnet;
     
@@ -45,16 +67,19 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
     }
     
     public double get_exchange_rate_between(String coin, String other_coin){
-        
-        if (this.isTestnet){
-            return (double)0;
-        }
-        
+        logger.info("JAVACRYPTOTOOLS: Coingecko get_exchange_rate_between START");
         // TODO: coin must be listed in https://api.coingecko.com/api/v3//coins/list
         // TODO: other_coin must be listed in https://api.coingecko.com/api/v3/simple/supported_vs_currencies
         try{
+            String id1 = Coingecko.symbolToId.get(coin);
+            String id2 = Coingecko.nameToId.get(other_coin);
+            if (id1 == null || id2 == null){
+                logger.warning("JAVACRYPTOTOOLS: Coingecko get_exchange_rate_between unsupported pair: " + id1 + " " + id2);
+                return -1;
+            }
+
             String base_url = get_api_url();
-            String url= base_url + "simple/price?ids=" + coin + "&vs_currencies=" + other_coin;
+            String url= base_url + "simple/price?ids=" + id1 + "&vs_currencies=" + id2;
             logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
             
             HttpsClient client= new HttpsClient(url);
@@ -63,8 +88,9 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
             
             // parse json
             JSONObject priceInfo = new JSONObject(content);
-            JSONObject coinInfo = priceInfo.getJSONObject(coin);
-            double rate= coinInfo.getDouble(other_coin);
+            JSONObject coinInfo = priceInfo.getJSONObject(id1);
+            double rate= coinInfo.getDouble(id2);
+            logger.info("JAVACRYPTOTOOLS: Coingecko request rate: " + rate);
             return rate;
         } catch (Exception e){
            return (double)-1; 

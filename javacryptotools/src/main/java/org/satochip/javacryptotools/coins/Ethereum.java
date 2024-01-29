@@ -87,9 +87,11 @@ public class Ethereum extends BaseCoin {
         //nftExplorer= new Opensea(coin_symbol, apikeys);
         nftExplorer= new Rarible(coin_symbol, apikeys, logLevel);
         if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys);
+            //priceExplorer= new Coingecko("testnet", apikeys);
+            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
         }else{
-            priceExplorer= new Coingecko("ethereum", apikeys);
+            //priceExplorer= new Coingecko("ethereum", apikeys);
+            priceExplorer= new CoinCombined("ETH", apikeys, logLevel);
         }
     }
     

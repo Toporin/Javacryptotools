@@ -8,15 +8,23 @@ public class Asset {
 	public String address = null;
 	public String balance = null;
 	public String decimals = "0";
+
+	// Token info
 	public String contract = null;
 	public String name = null;
 	public String symbol = null;
 	public String description = null;
 
+	// rate info
 	public Boolean rateAvailable = false;
 	public Double rate = 0.0;
 	public String rateCurrency = "";
+	public String valueInFirstCurrency = null; // typically, in native currency
+	public String firstCurrency = null;
+	public String valueInSecondCurrency = null;
+	public String secondCurrency = null;
 
+	// Links
 	public String explorerLink = null;
 	public String iconUrl = null;
 

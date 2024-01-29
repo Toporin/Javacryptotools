@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -60,7 +61,8 @@ public class Blockstream extends BaseExplorer implements Explorer{
     }
 
     public List<Asset> get_asset_list(String address){
-        return null;
+        // unsupported
+        return new ArrayList<Asset>();//return null;
     }
 
     public double get_token_balance(String address, String contract){

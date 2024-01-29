@@ -282,6 +282,7 @@ public abstract class BaseCoin {
     }
 
     // PRICE API
+    // todo deprecate
     public double get_exchange_rate_between(String other_coin){
         if (priceExplorer!=null){
             return  priceExplorer.get_exchange_rate_between(other_coin);
