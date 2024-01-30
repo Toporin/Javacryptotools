@@ -79,10 +79,12 @@ public class Fullstack extends BaseExplorer implements Explorer{
     }
 
     public double get_token_balance(String address, String contract){
+        // unsupported
         return (double)-1;
     }
     
     public HashMap<String, String> get_token_info(String contract){
+        // unsupported
         return new HashMap<String, String>();
     }
     

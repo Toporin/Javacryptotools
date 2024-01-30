@@ -74,11 +74,12 @@ public class Litecoin extends BaseCoin {
         
         token_supported= false;
         nft_supported= false;
-        explorer= new Sochain(coin_symbol, apikeys);
+        //explorer= new Sochain(coin_symbol, apikeys);
+        explorer= new Blockcypher(coin_symbol, apikeys, logLevel);
         if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys);
+            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
         }else{
-            priceExplorer= new Coingecko("litecoin", apikeys);
+            priceExplorer= new Coingecko("litecoin", apikeys, logLevel);
         }
     }
 
