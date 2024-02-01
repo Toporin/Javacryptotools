@@ -8,6 +8,7 @@ import org.satochip.javacryptotools.coins.AssetType;
 import org.satochip.javacryptotools.coins.Ethereum;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -110,7 +111,8 @@ public class Ethplorer extends BaseExplorer implements Explorer{
             List<Asset> assetList = new ArrayList<Asset>();
             JSONObject reader = new JSONObject(content);
             
-            JSONArray tokens = reader.getJSONArray("tokens");
+            JSONArray tokens = reader.optJSONArray("tokens");
+            if (tokens == null){return Collections.emptyList();}
             for (int i = 0; i < tokens.length(); i++){
                 JSONObject token = tokens.getJSONObject(i);
 
@@ -170,7 +172,7 @@ public class Ethplorer extends BaseExplorer implements Explorer{
         } catch (Exception e){
             logger.warning("JAVACRYPTOTOOLS: Ethplorer get_asset_list exception: " + e);
             System.out.println("JAVACRYPTOTOOLS: Ethplorer get_asset_list exception: " + e);
-            throw new RuntimeException("Etherscan: failed to fetch Ethereum token balance: " + e);
+            throw new RuntimeException("Ethplorer: failed to fetch Ethereum token balance: " + e);
         }
     }
 
