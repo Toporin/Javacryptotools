@@ -1,9 +1,30 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.2.0]: 
+
+* Add listing assets support:
+  * get a list of Tokens & NFTs associated with a given address
+  * For each assset, populate an object Asset with info on a best effort basis
+
+* Add Ethplorer explorer for Ethereum
+* Add Blockcypher explorer for Litecoin (& Dogecoin)
+* Blockstream, Fullstack, Sochain: get_asset_list() returns empty list instead of null
+* Improve logging
+* add Checksumed address support for ethereum and forks
+
+* Improve price explorer support:
+  * Add Coingate price explorer
+  * Add CoinCombined price explorer (uses Coingate & Coingecko)
+  * Add exchange rate & valuation data in Asset
+  * Counterparty: add Coincombined as default price explorer
+  * Ethereum: add Coincombined as default price explorer
+
 
 ## [0.1.0]: 
 

@@ -46,7 +46,7 @@ You can build the jar file with ```./gradlew clean build```
 You can import the different libraries in your Gradle project by placing the .jar library in a folder (e.g. 'libs')
 and by adding the following line in the *dependencies* section of your *build.gradle* file:
 
-```api files('libs/javacryptotools-0.0.3.jar')```
+```api files('libs/javacryptotools-0.2.0.jar')```
 
 In the future, the library will also be available on Maven central repository.
 
