@@ -159,7 +159,7 @@ public class Covalent extends BaseExplorer implements Explorer {
                     logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list tokenContract1: " + tokenContract);
                     tokenContract = Polygon.toChecksumAddress(tokenContract);
                     logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list tokenContract2: " + tokenContract);
-                    asset.iconUrl = "https://assets-cdn.trustwallet.com/blockchains/covalent/assets/" + tokenContract + "/logo.png";
+                    asset.iconUrl = "https://assets-cdn.trustwallet.com/blockchains/polygon/assets/" + tokenContract + "/logo.png";
                 } else if (coin_symbol == "BNB") {
                     String tokenContract = asset.contract.toLowerCase();
                     tokenContract = Polygon.toChecksumAddress(tokenContract);
