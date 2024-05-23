@@ -22,6 +22,7 @@ public final class Constants {
     public static final int RBTC= 0x80000089;
     public static final int BCH= 0x80000091;
     public static final int BSC= 0x80000207;
+    public static final int MATIC= 0x800003c6;
     
     // map coin symbol => slip44
     public static final Map<String, Integer> MAP_SLIP44_BY_SYMBOL;
@@ -37,6 +38,7 @@ public final class Constants {
         tmpmap.put("RBTC", RBTC);
         tmpmap.put("BCH", BCH);
         tmpmap.put("BSC", BSC);
+        tmpmap.put("MATIC", MATIC);
         MAP_SLIP44_BY_SYMBOL = Collections.unmodifiableMap(tmpmap);
     }
   
@@ -54,10 +56,11 @@ public final class Constants {
         tmpmap.put(RBTC, "RBTC");
         tmpmap.put(BCH, "BCH");
         tmpmap.put(BSC, "BSC");
+        tmpmap.put(MATIC, "MATIC");
         MAP_SYMBOL_BY_SLIP44 = Collections.unmodifiableMap(tmpmap);
     }
     
-    public static final String[] SUPPORTS_TOKEN = {"XCP", "ETH", "ETC", "BSC"};
+    public static final String[] SUPPORTS_TOKEN = {"XCP", "ETH", "ETC", "BSC", "MATIC"};
     public static final Set<String> SUPPORTS_TOKEN_SET = new HashSet<>(Arrays.asList(SUPPORTS_TOKEN));
     
 }
