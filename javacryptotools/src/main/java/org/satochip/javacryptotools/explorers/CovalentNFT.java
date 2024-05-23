@@ -15,19 +15,15 @@ import org.json.JSONObject;
 public class CovalentNFT extends BaseExplorer implements NftExplorer {
 
     // Get Chain from coin symbol
-    private String getChain(String coinSymbol) {
-        switch (coinSymbol) {
-            case "MATIC":
-                return "matic-mainnet";
-            case "MUMBAI":
-                return "matic-mumbai";
-            default:
-                return "matic-mainnet";
+    private String get_chain(String coinSymbol) {
+        if ("MATIC".equals(coinSymbol)) {
+            return "matic-mainnet";
         }
+        return "matic-mumbai";
     }
 
     // Get Basic Auth Header
-    private String getBasicAuth(String apiKey) {
+    private String get_basic_auth(String apiKey) {
         String username = apiKey;
         String password = "";
         String loginString = username + ":" + password;
@@ -47,13 +43,11 @@ public class CovalentNFT extends BaseExplorer implements NftExplorer {
     }
 
     public String get_nft_owner_weburl(String addr){
-        String web_url="https://rarible.com/user/" + addr + "/owned";
-        return web_url;
+        return "https://rarible.com/user/" + addr + "/owned";
     };
 
     public String get_nft_weburl(String contract, String tokenID){
-        String web_url="https://rarible.com/token/polygon/" + contract  + ":" + tokenID;
-        return web_url;
+        return "https://rarible.com/token/polygon/" + contract  + ":" + tokenID;
     }
 
     public List<Asset> get_nft_list(String address) {
@@ -68,7 +62,7 @@ public class CovalentNFT extends BaseExplorer implements NftExplorer {
             String apikey= (String) apikeys.get("API_KEY_RARIBLE");
             String base_url = get_api_url();
             String url = base_url
-                    + getChain(this.coin_symbol)
+                    + get_chain(this.coin_symbol)
                     + "/address/"
                     + address
                     + "/balances_nft/";
@@ -77,7 +71,7 @@ public class CovalentNFT extends BaseExplorer implements NftExplorer {
             // send request
             HashMap<String, String> headers = new HashMap<String, String>();
             headers.put("Content-Type", "application/json");
-            headers.put("Authorization", getBasicAuth(apikey));
+            headers.put("Authorization", get_basic_auth(apikey));
             HttpsClient client= new HttpsClient(url, headers);
             String content= client.request();
             logger.info("JAVACRYPTOTOOLS: Covalent get_nft_list content: " + content);
