@@ -37,6 +37,19 @@ public class Covalent extends BaseExplorer implements Explorer {
         return "Basic " + Base64.getEncoder().encodeToString(loginString.getBytes());
     }
 
+    // Convert balance to double
+    private Double convert_balance_to_double(String balance, int decimals) {
+        try {
+            BigDecimal balanceDecimal = new BigDecimal(balance);
+            BigDecimal divisor = BigDecimal.ONE.scaleByPowerOfTen(decimals);
+            BigDecimal balanceDouble = balanceDecimal.divide(divisor);
+            return balanceDouble.doubleValue();
+        } catch (NumberFormatException e) {
+            logger.warning("Error: Balance is not a valid number.");
+            return null;
+        }
+    }
+
     // Get Chain from coin symbol
     private String get_chain(String coinSymbol) {
         if ("MATIC".equals(coinSymbol)) {
@@ -80,11 +93,11 @@ public class Covalent extends BaseExplorer implements Explorer {
 
             JSONObject reader = new JSONObject(content);
             JSONObject data = reader.getJSONObject("data");
-            Double balance = data.getJSONArray("items").getJSONObject(0).getDouble("balance");
+            int decimals = data.getJSONArray("items").getJSONObject(0).getInt("contract_decimals");
+            String balance = data.getJSONArray("items").getJSONObject(0).getString("balance");
+            Double balanceResult = convert_balance_to_double(balance, decimals);
 
-            logger.info("JAVACRYPTOTOOLS: Covalent balance: " + balance);
-            System.out.println("JAVACRYPTOTOOLS: Covalent balance: " + balance);
-            return balance;
+            return balanceResult;
         } catch (Exception e) {
             logger.warning("JAVACRYPTOTOOLS: Covalent exception in balance: " + e);
             System.out.println("JAVACRYPTOTOOLS: Covalent exception in balance: " + e);
@@ -100,7 +113,6 @@ public class Covalent extends BaseExplorer implements Explorer {
                     + "/address/"
                     + addr
                     + "/balances_v2/";
-            logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list  url: " + url);
 
             String apikey = (String) apikeys.get("API_KEY_COVALENT");
 
@@ -110,73 +122,51 @@ public class Covalent extends BaseExplorer implements Explorer {
             headers.put("Authorization", get_basic_auth(apikey));
             HttpsClient client = new HttpsClient(url, headers);
             String content = client.request();
-            logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list content: " + content);
 
             // parse json
             List<Asset> assetList = new ArrayList<Asset>();
             JSONObject reader = new JSONObject(content);
 
-            JSONArray tokens = reader.optJSONArray("tokens");
-            if (tokens == null) {
+            JSONObject data = reader.getJSONObject("data");
+            JSONArray items = data.getJSONArray("items");
+            if (items == null) {
                 return Collections.emptyList();
             }
 
-            for (int i = 0; i < tokens.length(); i++) {
-                JSONObject token = tokens.getJSONObject(i);
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject itemInfo = items.getJSONObject(i);
 
                 Asset asset = new Asset();
                 asset.type = AssetType.Token;
-                asset.balance = token.getString("rawBalance");
                 System.out.println(asset.balance);
 
-                JSONObject tokenInfo = token.getJSONObject("tokenInfo");
-                asset.name = tokenInfo.getString("name");
-                asset.contract = tokenInfo.getString("address");
-                asset.symbol = tokenInfo.getString("symbol");
-                asset.decimals = tokenInfo.optString("decimals", "0");
+                asset.name = itemInfo.getString("contract_name");
+                asset.contract = itemInfo.getString("contract_address");
+                asset.symbol = itemInfo.getString("contract_ticker_symbol");
+                asset.decimals = itemInfo.optString("contract_decimals", "0");
+                asset.balance = itemInfo.getString("balance");
+
+                if (!itemInfo.isNull("quote_rate")) {
+                    asset.rate = itemInfo.getDouble("quote_rate");
+                }
                 System.out.println(asset.name);
                 System.out.println(asset.contract);
                 System.out.println(asset.symbol);
                 System.out.println(asset.decimals);
 
-                if (tokenInfo.has("price")) {
-                    JSONObject price = tokenInfo.optJSONObject("price");
-                    if (price != null) {
-                        asset.rate = price.getDouble("rate");
-                        asset.rateCurrency = price.getString("currency");
-                        asset.rateAvailable = true;
-                        System.out.println(asset.rate + " " + asset.rateCurrency);
-                    } else {
-                        asset.rateAvailable = false;
-                        System.out.println("No price rate available!");
-                    }
-                }
-
                 asset.explorerLink = get_token_weburl(asset.contract);
-
-                if (coin_symbol == "MATIC") {
-                    String tokenContract = asset.contract.toLowerCase();
-                    logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list tokenContract1: " + tokenContract);
-                    tokenContract = Polygon.toChecksumAddress(tokenContract);
-                    logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list tokenContract2: " + tokenContract);
-                    asset.iconUrl = "https://assets-cdn.trustwallet.com/blockchains/polygon/assets/" + tokenContract + "/logo.png";
-                } else if (coin_symbol == "BNB") {
-                    String tokenContract = asset.contract.toLowerCase();
-                    tokenContract = Polygon.toChecksumAddress(tokenContract);
-                    asset.iconUrl = "https://assets-cdn.trustwallet.com/blockchains/smartchain/assets/" + tokenContract + "/logo.png";
-                }
+                asset.iconUrl = itemInfo.getJSONObject("logo_urls").getString("token_logo_url");
 
                 // to get nft info, we use another method getNftList(addr: String, contract: String) from NftExplorer class
                 assetList.add(asset);
-                logger.info("JAVACRYPTOTOOLS: Covalent get_asset_list asset: " + asset);
-
+                logger.warning("JAVACRYPTOTOOLS: Covalent get_asset_list asset: " + asset);
             }
             return assetList;
 
         } catch (Exception e) {
             logger.warning("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
             System.out.println("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
-            throw new RuntimeException("Covalent: failed to fetch Ethereum token balance: " + e);
+            throw new RuntimeException("Covalent: failed to fetch Matic token balance: " + e);
         }
     }
 

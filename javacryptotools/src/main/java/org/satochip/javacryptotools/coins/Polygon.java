@@ -77,9 +77,9 @@ public class Polygon extends Ethereum {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
 
-        explorer= new Covalent(coin_symbol, apikeys, logLevel);
-        token_supported= true;
-        nft_supported= true;
+        explorer = new Covalent(coin_symbol, apikeys, logLevel);
+        token_supported = true;
+        nft_supported = true;
         nftExplorer = new CovalentNFT(coin_symbol, apikeys, logLevel);
         if (is_testnet){
             priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
