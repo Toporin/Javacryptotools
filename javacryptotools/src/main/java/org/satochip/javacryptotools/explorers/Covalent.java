@@ -145,8 +145,11 @@ public class Covalent extends BaseExplorer implements Explorer {
                 asset.symbol = itemInfo.getString("contract_ticker_symbol");
                 asset.decimals = itemInfo.optString("contract_decimals", "0");
                 asset.balance = itemInfo.getString("balance");
-                asset.valueInSecondCurrency = itemInfo.getString("quote");
-                asset.secondCurrency = "$";
+                if (!itemInfo.isNull("quote_rate")) {
+                    asset.rate = itemInfo.getDouble("quote_rate");
+                    asset.rateCurrency = data.getString("quote_currency");
+                    asset.rateAvailable = true;
+                }
 
                 System.out.println(asset.name);
                 System.out.println(asset.contract);

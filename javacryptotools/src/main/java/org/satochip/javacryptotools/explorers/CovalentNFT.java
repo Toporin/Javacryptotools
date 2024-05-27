@@ -106,12 +106,10 @@ public class CovalentNFT extends BaseExplorer implements NftExplorer {
                 Asset asset = new Asset();
                 asset.address = address;
                 asset.contract = token.getString("contract_address");
-                try {
-                    long tokenidLong = token.getLong("tokenId"); // throw if fail
-                    asset.tokenid = String.valueOf(tokenidLong);
-                } catch (Exception e) {
-                    asset.tokenid = "NaN"; // todo?
-                    logger.warning("JAVACRYPTOTOOLS: Covalent get_nft_list parse tokenid exception: " + e);
+                if (!nftItem.isNull("token_id")) {
+                    asset.tokenid = nftItem.getString("token_id");
+                } else {
+                    asset.tokenid = "NaN";
                 }
                 logger.info("JAVACRYPTOTOOLS: Covalent get_nft_list : asset.tokenid" + asset.tokenid);
                 asset.balance = "1";
