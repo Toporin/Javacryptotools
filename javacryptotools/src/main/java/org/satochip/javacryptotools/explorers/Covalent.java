@@ -136,6 +136,15 @@ public class Covalent extends BaseExplorer implements Explorer {
             for (int i = 0; i < items.length(); i++) {
                 JSONObject itemInfo = items.getJSONObject(i);
 
+                // Do not add Matic token to avoid duplicate
+                if (itemInfo.getString("contract_name").equals("Matic Token")) {
+                    continue;
+                }
+                // for unknown reason, explorer sometimes returns token with 0 balance
+                if (itemInfo.getString("balance").equals("0")) {
+                    continue;
+                }   
+
                 Asset asset = new Asset();
                 asset.type = AssetType.Token;
                 System.out.println(asset.balance);
