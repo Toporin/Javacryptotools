@@ -35,7 +35,7 @@ public class Polygon extends Ethereum {
 
         if (is_testnet){
             coin_symbol = "MUMBAI";
-            display_name = "Matic Testnet";
+            display_name = "Polygon Testnet";
 
             magicbyte = 111;
             script_magicbyte = 196;
@@ -56,7 +56,7 @@ public class Polygon extends Ethereum {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         } else{
             coin_symbol = "MATIC";
-            display_name = "Matic";
+            display_name = "Polygon";
 
             magicbyte = 0;
             script_magicbyte = 5;
