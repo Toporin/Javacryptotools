@@ -52,7 +52,7 @@ public class Covalent extends BaseExplorer implements Explorer {
 
     // Get Chain from coin symbol
     private String get_chain(String coinSymbol) {
-        if ("MATIC".equals(coinSymbol)) {
+        if ("POL".equals(coinSymbol)) {
             return "matic-mainnet";
         }
         return "matic-mumbai";
@@ -136,8 +136,8 @@ public class Covalent extends BaseExplorer implements Explorer {
             for (int i = 0; i < items.length(); i++) {
                 JSONObject itemInfo = items.getJSONObject(i);
 
-                // Do not add Matic token to avoid duplicate
-                if (itemInfo.getString("contract_name").equals("Matic Token")) {
+                // Do not add Pol token to avoid duplicate
+                if (itemInfo.getString("contract_name").equals("POL Token")) {
                     continue;
                 }
                 // for unknown reason, explorer sometimes returns token with 0 balance
@@ -177,7 +177,7 @@ public class Covalent extends BaseExplorer implements Explorer {
         } catch (Exception e) {
             logger.warning("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
             System.out.println("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
-            throw new RuntimeException("Covalent: failed to fetch Matic token balance: " + e);
+            throw new RuntimeException("Covalent: failed to fetch Pol token balance: " + e);
         }
     }
 

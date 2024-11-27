@@ -17,7 +17,7 @@ public class CovalentNFT extends BaseExplorer implements NftExplorer {
 
     // Get Chain from coin symbol
     private String get_chain(String coinSymbol) {
-        if ("MATIC".equals(coinSymbol)) {
+        if ("POL".equals(coinSymbol)) {
             return "matic-mainnet";
         }
         return "matic-mumbai";

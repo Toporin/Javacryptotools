@@ -55,7 +55,7 @@ public class Polygon extends Ethereum {
             xpub_headers.put("p2wsh", 0x2aa7ed3);
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         } else{
-            coin_symbol = "MATIC";
+            coin_symbol = "POL";
             display_name = "Polygon";
 
             magicbyte = 0;
@@ -84,7 +84,7 @@ public class Polygon extends Ethereum {
         if (is_testnet){
             priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
         }else{
-            priceExplorer= new CoinCombined("MATIC", apikeys, logLevel);
+            priceExplorer= new CoinCombined("POL", apikeys, logLevel);
         }
     }
 }
