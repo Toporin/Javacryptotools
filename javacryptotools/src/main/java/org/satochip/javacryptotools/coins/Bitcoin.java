@@ -2,6 +2,7 @@ package org.satochip.javacryptotools.coins;
 
 import org.satochip.javacryptotools.explorers.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -13,9 +14,6 @@ public class Bitcoin extends BaseCoin {
     }
     public Bitcoin(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
-
-        is_testnet= is_testnet;
-        apikeys= apikeys;
 
         segwit_supported = true;
         use_compressed_addr = true;
@@ -76,12 +74,16 @@ public class Bitcoin extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorer= new Blockstream(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-        }else{
-            priceExplorer= new Coingecko("bitcoin", apikeys, logLevel);
-        }
+
+        explorers.add(new Blockstream(this, apikeys, logLevel));
+        priceExplorers.add(new Coingecko(this, apikeys, logLevel));
+//        explorer= new Blockstream(this, apikeys, logLevel);
+//        if (is_testnet){
+//            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
+//        }else{
+//            priceExplorer= new Coingecko("bitcoin", apikeys, logLevel);
+//        }
+
     }
 
 }

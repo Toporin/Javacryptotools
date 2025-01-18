@@ -3,6 +3,7 @@ package org.satochip.javacryptotools.explorers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.satochip.javacryptotools.coins.BaseCoin;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,19 +35,12 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
         map2.put("USD", "usd");
         nameToId = Collections.unmodifiableMap(map2);
     }
-    
-    private final boolean isTestnet;
-    
-    public Coingecko(String coin_symbol, Map<String, String> apikeys){
-        this(coin_symbol, apikeys, Level.WARNING);
+
+    public Coingecko(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
     }
-    public Coingecko(String coin_symbol, Map<String, String> apikeys, Level logLevel){
-        super(coin_symbol, apikeys, logLevel);
-        if (coin_symbol.equals("testnet")){
-            this.isTestnet=true;
-        } else {
-            this.isTestnet=false;
-        }
+    public Coingecko(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
     }
     
     public String get_api_url(){
@@ -63,6 +57,9 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
     }
     
     public double get_exchange_rate_between(String other_coin){
+        if (this.coin.is_testnet){
+            return 0;
+        }
         return get_exchange_rate_between(this.coin_symbol, other_coin);
     }
     
@@ -98,33 +95,33 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
         
     }
     
-    public double get_token_exchange_rate_between(String contract, String other_coin){
-        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
-    }
+//    public double get_token_exchange_rate_between(String contract, String other_coin){
+//        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
+//    }
     
-    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
-        // https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce&vs_currencies=usd
-        if (this.isTestnet){
-            return (double)0;
-        }
-        
-        try{
-            String base_url = get_api_url();
-            String url= base_url + "simple/token_price/" + coin + "?contract_addresses="+contract + "&vs_currencies=" + other_coin;
-            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
-            
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
-            
-            // parse json
-            JSONObject priceInfo = new JSONObject(content);
-            JSONObject contractInfo = priceInfo.getJSONObject(contract);
-            double rate= contractInfo.getDouble(other_coin);
-            return rate;
-        } catch (Exception e){
-           return (double)-1; 
-        }
-    }
+//    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
+//        // https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce&vs_currencies=usd
+//        if (this.isTestnet){
+//            return (double)0;
+//        }
+//
+//        try{
+//            String base_url = get_api_url();
+//            String url= base_url + "simple/token_price/" + coin + "?contract_addresses="+contract + "&vs_currencies=" + other_coin;
+//            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
+//
+//            HttpsClient client= new HttpsClient(url);
+//            String content= client.request();
+//            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
+//
+//            // parse json
+//            JSONObject priceInfo = new JSONObject(content);
+//            JSONObject contractInfo = priceInfo.getJSONObject(contract);
+//            double rate= contractInfo.getDouble(other_coin);
+//            return rate;
+//        } catch (Exception e){
+//           return (double)-1;
+//        }
+//    }
       
 }

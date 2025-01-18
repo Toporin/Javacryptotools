@@ -1,6 +1,8 @@
 package org.satochip.javacryptotools.explorers;
 
 import org.json.JSONObject;
+import org.satochip.javacryptotools.coins.BaseCoin;
+
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -9,18 +11,13 @@ import java.util.logging.Level;
 public class Coingate extends BaseExplorer implements PriceExplorer{
 
 
-    private final boolean isTestnet;
+    //private final boolean isTestnet;
 
-    public Coingate(String coin_symbol, Map<String, String> apikeys){
-        this(coin_symbol, apikeys, Level.WARNING);
+    public Coingate(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
     }
-    public Coingate(String coin_symbol, Map<String, String> apikeys, Level logLevel){
-        super(coin_symbol, apikeys, logLevel);
-        if (coin_symbol.equals("testnet")){
-            this.isTestnet=true;
-        } else {
-            this.isTestnet=false;
-        }
+    public Coingate(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
     }
 
     public String get_api_url(){
@@ -37,6 +34,9 @@ public class Coingate extends BaseExplorer implements PriceExplorer{
     }
 
     public double get_exchange_rate_between(String other_coin){
+        if (this.coin.is_testnet){
+            return 0;
+        }
         return get_exchange_rate_between(this.coin_symbol, other_coin);
     }
 
@@ -63,13 +63,13 @@ public class Coingate extends BaseExplorer implements PriceExplorer{
         }
     }
 
-    public double get_token_exchange_rate_between(String contract, String other_coin){
-        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
-    }
-
-    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
-        //unsupported
-        return -1;
-    }
+//    public double get_token_exchange_rate_between(String contract, String other_coin){
+//        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
+//    }
+//
+//    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
+//        //unsupported
+//        return -1;
+//    }
 
 }

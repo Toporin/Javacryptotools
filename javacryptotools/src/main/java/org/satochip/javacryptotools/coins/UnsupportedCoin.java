@@ -5,14 +5,14 @@ import org.satochip.javacryptotools.explorers.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class UnsupportedCoin extends BaseCoin {
 
     public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys){
-
-        is_testnet= is_testnet;
-        apikeys= apikeys;
-
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys, Level level){
         segwit_supported = false;
         use_compressed_addr = false;
 

@@ -185,8 +185,8 @@ class CoinTest {
         System.out.println(coin.display_name+ " - test_address - START!");        
         assertEquals("Litecoin", coin.display_name);
         assertEquals("LTC", coin.coin_symbol);
-        assertEquals( true, coin.segwit_supported);
-        assertEquals( true, coin.use_compressed_addr);
+        assertTrue(coin.segwit_supported);
+        assertTrue(coin.use_compressed_addr);
         test_coin(coin);
         System.out.println(coin.display_name+ " - test_address - FINISH!");
         System.out.println("===============================\n\n\n");

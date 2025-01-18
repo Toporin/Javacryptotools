@@ -17,11 +17,8 @@ public class Ethereum extends BaseCoin {
     public Ethereum(boolean is_testnet, Map<String, String> apikeys){
         this(is_testnet, apikeys, Level.WARNING);
     }
-    public Ethereum(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
-        super(logLevel);
-
-        is_testnet= is_testnet;
-        apikeys= apikeys;
+    public Ethereum(boolean is_testnet, Map<String, String> apikeys, Level level){
+        super(level);
 
         segwit_supported = false;
         use_compressed_addr = false;
@@ -80,19 +77,20 @@ public class Ethereum extends BaseCoin {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
 
-        //explorer= new Etherscan(coin_symbol, apikeys);
-        explorer= new Ethplorer(coin_symbol, apikeys, logLevel);
         token_supported= true;
         nft_supported= true;
-        //nftExplorer= new Opensea(coin_symbol, apikeys);
-        nftExplorer= new Rarible(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            //priceExplorer= new Coingecko("testnet", apikeys);
-            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-        }else{
-            //priceExplorer= new Coingecko("ethereum", apikeys);
-            priceExplorer= new CoinCombined("ETH", apikeys, logLevel);
-        }
+        explorers.add(new Blockscout(this, apikeys, level));
+        priceExplorers.add(new Coingecko(this, apikeys, level));
+//        explorer= new Ethplorer(coin_symbol, apikeys, logLevel);
+//        //nftExplorer= new Opensea(coin_symbol, apikeys);
+//        nftExplorer= new Rarible(coin_symbol, apikeys, logLevel);
+//        if (is_testnet){
+//            //priceExplorer= new Coingecko("testnet", apikeys);
+//            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
+//        }else{
+//            //priceExplorer= new Coingecko("ethereum", apikeys);
+//            priceExplorer= new CoinCombined("ETH", apikeys, logLevel);
+//        }
     }
     
     // see https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java

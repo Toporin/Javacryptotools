@@ -20,10 +20,14 @@ public interface Explorer {
     
     public double get_balance(String addr);
 
+    //public double get_exchange_rate_with(String other_coin);
+
     public List<Asset> get_asset_list(String addr);
 
-    public double get_token_balance(String addr, String contract);
-    
-    public HashMap<String, String> get_token_info(String contract);
+    // todo deprecate
+    //public double get_token_balance(String addr, String contract);
+
+    // todo deprecate
+    //public HashMap<String, String> get_token_info(String contract);
     
 }
