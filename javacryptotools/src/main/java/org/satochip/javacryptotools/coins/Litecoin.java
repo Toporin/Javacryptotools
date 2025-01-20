@@ -4,13 +4,15 @@ import org.satochip.javacryptotools.explorers.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class Litecoin extends BaseCoin {
 
     public Litecoin(boolean is_testnet, Map<String, String> apikeys){
-
-        is_testnet= is_testnet;
-        apikeys= apikeys;
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public Litecoin(boolean is_testnet, Map<String, String> apikeys, Level level){
+        super(level);
 
         segwit_supported = true;
         use_compressed_addr = true;
@@ -51,7 +53,6 @@ public class Litecoin extends BaseCoin {
         } else{
             coin_symbol = "LTC";
             display_name = "Litecoin";
-            //explorer = sochain;
             magicbyte = 48;
             script_magicbyte = 50;
             // script_magicbyte = 5 //Old magicbyte still recognised by explorers
@@ -74,13 +75,8 @@ public class Litecoin extends BaseCoin {
         
         token_supported= false;
         nft_supported= false;
-        //explorer= new Sochain(coin_symbol, apikeys);
-        explorer= new Blockcypher(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-        }else{
-            priceExplorer= new Coingecko("litecoin", apikeys, logLevel);
-        }
+        explorers.add(new Blockcypher(this, apikeys, logLevel));
+        priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 
 }

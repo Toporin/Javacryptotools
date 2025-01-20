@@ -18,8 +18,6 @@ public class BitcoinCash extends BaseCoin {
     }
     public BitcoinCash(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
-        is_testnet= is_testnet;
-        apikeys= apikeys;
 
         segwit_supported = false;
         use_compressed_addr = true;
@@ -85,20 +83,13 @@ public class BitcoinCash extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorer= new Fullstack(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-        }else{
-            priceExplorer= new Coingecko("bitcoin-cash", apikeys, logLevel);
-        }
+        explorers.add(new Fullstack(this, apikeys, logLevel));
+        priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
-    
-    
+
     public String pubToAddress(byte[] pubkey){
         
         String legacy= pubToLegacyAddress(pubkey);
-        // CashAddress CASH = CashAddress.CASH;
-        // String cashAddress= CASH.encodeCashAdrressByLegacy(legacy);
         
         // compute hash160
         byte[] bytes;

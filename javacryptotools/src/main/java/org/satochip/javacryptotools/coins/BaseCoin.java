@@ -30,7 +30,6 @@ public abstract class BaseCoin {
     public Level logLevel;
     public String coin_symbol;
     public String display_name;
-    public boolean enabled;
     public boolean segwit_supported;
     public int magicbyte;
     public int script_magicbyte;
@@ -38,9 +37,8 @@ public abstract class BaseCoin {
     
     public boolean token_supported;
     public boolean nft_supported;
-    public Explorer explorer;
-    public NftExplorer nftExplorer;
-    public PriceExplorer priceExplorer;
+    public List<Explorer> explorers = new ArrayList<>();
+    public List<PriceExplorer> priceExplorers = new ArrayList<>();
     public HashMap<String, String> apikeys= null;
 
     public boolean is_testnet;
@@ -77,7 +75,11 @@ public abstract class BaseCoin {
     public void setLoggerLevel(Level level){
         logger.setLevel(level);
     }
-    
+
+    /*
+     *   KEY & ADDRESS ENCODING
+     */
+
     public String encodePrivkey(byte[] privkey){
 
         //Preconditions.checkArgument(privkey.length == 32, "Private keys must be 32 bytes");
@@ -215,90 +217,57 @@ public abstract class BaseCoin {
     */
     
     public double getBalance(String addr){
-        if (explorer!=null){
-            return explorer.get_balance(addr);
-        } else {
-            return (double)-1;
+        for (Explorer explorer : explorers){
+            try{
+                return explorer.get_balance(addr);
+            } catch (Exception e) {
+                logger.info("JAVACRYPTOTOOLS: failed to get balance from " + explorer + " with error: " + e);
+            }
         }
+        return -1;
     }
 
     public List<Asset> getAssetList(String addr){
-        if (explorer!=null){
-            return explorer.get_asset_list(addr);
-        } else {
-            return new ArrayList<Asset>(); //null;
+        for (Explorer explorer : explorers){
+            try{
+                return explorer.get_asset_list(addr);
+            } catch (Exception e) {
+                logger.info("JAVACRYPTOTOOLS: failed to get assets from " + explorer + " with error: " + e);
+            }
         }
+        return null;
     }
 
     public String getAddressWeburl(String addr){
-        if (explorer!=null){
-            return explorer.get_address_weburl(addr);
-        } else {
-            return "";
+        for (Explorer explorer : explorers){
+            try{
+                return explorer.get_address_weburl(addr);
+            } catch (Exception e) {
+                logger.info("JAVACRYPTOTOOLS: failed to get explorer url from " + explorer + " with error: " + e);
+            }
         }
-    }
-    
-    public double getTokenBalance(String addr, String contract){
-        if (explorer!=null){ 
-            return explorer.get_token_balance(addr, contract);
-        } else {
-            return (double)-1;
-        }
-    }
-    
-    public HashMap<String, String> getTokenInfo(String contract){
-        if (explorer!=null){ 
-            return explorer.get_token_info(contract);
-        } else {
-            return new HashMap<String, String>();
-        }
+        return "";
     }
 
-    // NFT API
-
-    public List<Asset> getNftList(String address){
-        if (nftExplorer!=null){
-            return nftExplorer.get_nft_list(address);
-        } else {
-            return Collections.emptyList();
-        }
+    /*
+     *   PRICE EXPLORER METHODS
+     */
+    public double get_exchange_rate_with(String other_coin){
+        return get_exchange_rate_between(this.coin_symbol, other_coin);
     }
 
-    public HashMap<String, String> getNftInfo(String contract, String tokenID){
-        if (nftExplorer!=null){
-            return nftExplorer.get_nft_info(contract, tokenID);
-        } else {
-            return new HashMap<String, String>();
+    public double get_exchange_rate_between(String coin, String other_coin){
+        for (PriceExplorer explorer : priceExplorers){
+            try{
+                double rate = explorer.get_exchange_rate_between(coin, other_coin);
+                if (rate >= 0) {
+                    return rate;
+                }
+            } catch (Exception e) {
+                logger.info("JAVACRYPTOTOOLS: failed to get rate from " + explorer + " with error: " + e);
+            }
         }
+        return -1;
     }
 
-    //todo deprecate
-    public JSONObject getNftInfoJson(String contract, String tokenID){
-        if (nftExplorer!=null){
-            return nftExplorer.get_nft_info_json(contract, tokenID);
-        } else {
-            return new JSONObject();
-        }
-    }
-
-    // PRICE API
-    // todo deprecate
-    public double get_exchange_rate_between(String other_coin){
-        if (priceExplorer!=null){
-            return  priceExplorer.get_exchange_rate_between(other_coin);
-        }
-        else {
-            return (double) -1;
-        }
-    }
-    
-    public double get_token_exchange_rate_between(String contract, String other_coin){
-        if ((priceExplorer!=null) && (token_supported)){
-            return  priceExplorer.get_token_exchange_rate_between(contract, other_coin);
-        }
-        else {
-            return (double) -1;
-        }
-    }
-        
 }

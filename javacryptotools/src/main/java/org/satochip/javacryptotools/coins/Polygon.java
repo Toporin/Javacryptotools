@@ -1,24 +1,19 @@
 package org.satochip.javacryptotools.coins;
 
-
 import org.satochip.javacryptotools.explorers.*;
-import org.bouncycastle.jcajce.provider.digest.Keccak;
-import org.bouncycastle.util.encoders.Hex;
-import org.satochip.javacryptotools.utils.Hash;
-import org.satochip.javacryptotools.utils.Numeric;
-import java.util.Arrays;
+
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Polygon extends Ethereum {
 
     public Polygon(boolean is_testnet, Map<String, String> apikeys){
-        super(is_testnet, apikeys);
-
-        is_testnet = is_testnet;
-        apikeys = apikeys;
+        this(is_testnet, apikeys, Level.WARNING);
+    }
+    public Polygon(boolean is_testnet, Map<String, String> apikeys, Level level){
+        super(is_testnet, apikeys, level);
 
         segwit_supported = false;
         use_compressed_addr = false;
@@ -77,14 +72,13 @@ public class Polygon extends Ethereum {
             xpub_headers.put("p2wsh-p2sh", 0x295b43f);
         }
 
-        explorer = new Covalent(coin_symbol, apikeys, logLevel);
         token_supported = true;
         nft_supported = true;
-        nftExplorer = new CovalentNFT(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-        }else{
-            priceExplorer= new CoinCombined("POL", apikeys, logLevel);
-        }
+
+        // reset explorers instantiated in parent class Ethereum!
+        explorers = new ArrayList<>();
+        explorers.add(new Blockscout(this, apikeys, logLevel));
+        priceExplorers = new ArrayList<>();
+        priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 }

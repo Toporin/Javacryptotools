@@ -1,23 +1,21 @@
 package org.satochip.javacryptotools.explorers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
+import org.satochip.javacryptotools.coins.BaseCoin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 public class Blockstream extends BaseExplorer implements Explorer{
 
-    public Blockstream(String coin_symbol, Map<String, String> apikeys){
-        this(coin_symbol, apikeys, Level.WARNING);
+    public Blockstream(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
     }
-    public Blockstream(String coin_symbol, Map<String, String> apikeys, Level logLevel){
-        super(coin_symbol, apikeys, logLevel);
+    public Blockstream(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
     }
 
     public String get_url(){
@@ -63,14 +61,6 @@ public class Blockstream extends BaseExplorer implements Explorer{
     public List<Asset> get_asset_list(String address){
         // unsupported
         return new ArrayList<Asset>();//return null;
-    }
-
-    public double get_token_balance(String address, String contract){
-        return (double)-1;
-    }
-
-    public HashMap<String, String> get_token_info(String contract){
-        return new HashMap<String, String>();
     }
     
 }

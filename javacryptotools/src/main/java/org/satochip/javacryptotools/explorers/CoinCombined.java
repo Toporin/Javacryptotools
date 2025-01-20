@@ -1,8 +1,9 @@
 package org.satochip.javacryptotools.explorers;
 
 import java.util.logging.Level;
-import org.json.JSONObject;
 import java.util.Map;
+
+import org.satochip.javacryptotools.coins.BaseCoin;
 
 // combines coingate & coingecko api depending on coin pair
 // fiat/fiat uses coingate
@@ -10,22 +11,17 @@ import java.util.Map;
 
 public class CoinCombined extends BaseExplorer implements PriceExplorer{
 
-    private final boolean isTestnet;
-    private PriceExplorer coingate;
-    private PriceExplorer coingecko;
+    private final PriceExplorer coingate;
+    private final PriceExplorer coingecko;
 
-    public CoinCombined(String coin_symbol, Map<String, String> apikeys){
-        this(coin_symbol, apikeys, Level.WARNING);
+    public CoinCombined(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
     }
-    public CoinCombined(String coin_symbol, Map<String, String> apikeys, Level logLevel){
-        super(coin_symbol, apikeys, logLevel);
-        if (coin_symbol.equals("testnet")){
-            this.isTestnet=true;
-        } else {
-            this.isTestnet=false;
-        }
-        coingate = new Coingate(coin_symbol, apikeys, logLevel);
-        coingecko = new Coingecko(coin_symbol, apikeys, logLevel);
+
+    public CoinCombined(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
+        coingate = new Coingate(coin, apikeys, logLevel);
+        coingecko = new Coingecko(coin, apikeys, logLevel);
     }
 
     public String get_api_url(){
@@ -37,11 +33,13 @@ public class CoinCombined extends BaseExplorer implements PriceExplorer{
     }
 
     public String get_price_weburl(String coin){
-        String web_url="https://coingate.com/exchange-rates/";
-        return web_url;
+        return "https://coingate.com/exchange-rates/";
     }
 
-    public double get_exchange_rate_between(String other_coin){
+    public double get_exchange_rate_with(String other_coin){
+        if (this.coin.is_testnet){
+            return 0;
+        }
         return get_exchange_rate_between(this.coin_symbol, other_coin);
     }
 
@@ -57,16 +55,8 @@ public class CoinCombined extends BaseExplorer implements PriceExplorer{
 
         } catch (Exception e){
             logger.warning("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between exception: " + e);
-            return (double)-1;
+            return -1;
         }
     }
 
-    public double get_token_exchange_rate_between(String contract, String other_coin){
-        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
-    }
-
-    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
-        //unsupported
-        return -1;
-    }
 }

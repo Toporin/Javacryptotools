@@ -14,9 +14,6 @@ public class Counterparty extends BaseCoin {
     public Counterparty(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
 
-        is_testnet= is_testnet;
-        apikeys= apikeys;
-
         segwit_supported = false; // currently, use legacy
         use_compressed_addr = true;
 
@@ -40,17 +37,8 @@ public class Counterparty extends BaseCoin {
     
         token_supported= true;
         nft_supported= true;
-        explorer= new Xchain(coin_symbol, apikeys, logLevel);
-        nftExplorer= new Xchain(coin_symbol, apikeys, logLevel);
-        if (is_testnet){
-            //priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-        }else{
-            //priceExplorer= new Coingecko("xcp", apikeys, logLevel);
-            priceExplorer= new CoinCombined("XCP", apikeys, logLevel);
-        }
+        explorers.add(new Tokenscan(this, apikeys, logLevel));
+        priceExplorers.add(new CoinCombined(this, apikeys, logLevel));
     }
-
-
 
 }

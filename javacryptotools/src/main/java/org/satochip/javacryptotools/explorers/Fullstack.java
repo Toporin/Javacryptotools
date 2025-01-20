@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
+import org.satochip.javacryptotools.coins.BaseCoin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.logging.Level;
 
 public class Fullstack extends BaseExplorer implements Explorer{
         
-    public Fullstack(String coin_symbol, Map<String, String> apikeys){
-        this(coin_symbol, apikeys, Level.WARNING);
+    public Fullstack(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
     }
-    public Fullstack(String coin_symbol, Map<String, String> apikeys, Level logLevel){
-        super(coin_symbol, apikeys, logLevel);
+    public Fullstack(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
     }
     
     public String get_url(){

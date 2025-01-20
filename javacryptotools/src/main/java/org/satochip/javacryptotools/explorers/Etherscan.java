@@ -1,15 +1,7 @@
 package org.satochip.javacryptotools.explorers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
-
-// import okhttp3.MediaType;
-// import okhttp3.OkHttpClient;
-// import okhttp3.Request;
-// import okhttp3.RequestBody;
-// import okhttp3.Response; 
 
 import java.util.List;
 import java.util.Map;
@@ -106,95 +98,6 @@ public class Etherscan extends BaseExplorer implements Explorer{
 
     public List<Asset> get_asset_list(String address){
         return null;
-    }
-
-    public double get_token_balance(String address, String contract){
-
-        /* 
-            https://api.etherscan.io/api
-               ?module=account
-               &action=tokenbalance
-               &contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055
-               &address=0xe04f27eb70e025b78871a2ad7eabe85e61212761
-               &tag=latest&apikey=YourApiKeyToken
-               
-               {"status":"1","message":"OK","result":"135499"}
-         */
-    
-        try{
-            String apikey= (String) apikeys.get("API_KEY_ETHERSCAN");
-            String base_url = get_api_url();
-            String url= base_url + "?module=account&action=tokenbalance&contractaddress="+contract+"&address=" + address + "&tag=latest&apikey=" + apikey;
-            logger.info("JAVACRYPTOTOOLS: Etherscan get_token_balance  url: " + url);
-            
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Etherscan get_token_balance content: " + content);
-            
-            // parse json
-            JSONObject reader = new JSONObject(content);
-            int statusCode = reader.getInt("status");
-            if (statusCode!=1){
-                throw new RuntimeException("Etherscan: Failed to fetch balance!");
-            }
-            long balanceLong = reader.getLong("result"); //
-            logger.info("JAVACRYPTOTOOLS: Etherscan balance: " + balanceLong);
-            // divide by decimals
-            //double balance= (double) (balanceLong)/(Math.pow(10, 18)); // most ERC20 use 18 decimals but etherscan does not offer reliable way to find out...
-            HashMap<String, String> tokenInfo= get_token_info(contract);
-            String decimalsTxt= tokenInfo.get("decimals");
-            int decimals= Integer.parseInt(decimalsTxt);
-            double balance= (double) (balanceLong) / (Math.pow(10, decimals));
-            return balance;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in balance: " + e);
-            throw new RuntimeException("Etherscan: failed to fetch Ethereum token balance!");
-        }    
-    }
-    
-    public HashMap<String, String> get_token_info(String contract){
-        
-        /* https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API#get-token-info
-            
-            {"error":{"code":1,"message":"Invalid API key"}}
-        */
-        
-        HashMap<String, String> tokenInfo= new HashMap<String, String>();
-        tokenInfo.put("name", "(unknown)");
-        tokenInfo.put("symbol", "(unknown)");
-        tokenInfo.put("decimals", "-1");
-        try{
-            String apikey= (String) apikeys.get("API_KEY_ETHPLORER");
-            String base_url = "https://api.ethplorer.io";
-            String url=  base_url + "/getTokenInfo/" + contract + "?apiKey=" + apikey;
-            logger.info("JAVACRYPTOTOOLS: Ethplorer get_token_info  url: " + url);
-            
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Etherscan get_token_info content: " + content);
-            
-            // parse json
-            JSONObject reader = new JSONObject(content);
-            if (reader.has("error")){
-                JSONObject error  = reader.getJSONObject("error");
-                String msg= error.optString("message", "Unknown error");
-                throw new RuntimeException("Failed to fetch token balance: "+ msg);
-            }
-            
-            String name= reader.optString("name", "(unknown)");
-            String symbol= reader.optString("symbol", "(unknown)");
-            String decimals= reader.optString("decimals", "-1");
-            tokenInfo.put("name", name);
-            tokenInfo.put("symbol", symbol);
-            tokenInfo.put("decimals", decimals);
-            logger.info("JAVACRYPTOTOOLS: Etherscan name: " + name);
-            logger.info("JAVACRYPTOTOOLS: Etherscan symbol: " + symbol);
-            logger.info("JAVACRYPTOTOOLS: Etherscan decimals: " + decimals);
-            return tokenInfo;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in get_token_info: " + e);
-            return tokenInfo;
-        }  
     }
         
 }
