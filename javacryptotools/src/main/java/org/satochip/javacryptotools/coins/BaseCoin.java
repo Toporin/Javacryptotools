@@ -30,7 +30,6 @@ public abstract class BaseCoin {
     public Level logLevel;
     public String coin_symbol;
     public String display_name;
-    //public boolean enabled;
     public boolean segwit_supported;
     public int magicbyte;
     public int script_magicbyte;
@@ -41,11 +40,6 @@ public abstract class BaseCoin {
     public List<Explorer> explorers = new ArrayList<>();
     public List<PriceExplorer> priceExplorers = new ArrayList<>();
     public HashMap<String, String> apikeys= null;
-
-    // todo deprecate
-    public Explorer explorer;
-    public NftExplorer nftExplorer;
-    public PriceExplorer priceExplorer;
 
     public boolean is_testnet;
     public boolean use_compressed_addr;
@@ -254,54 +248,10 @@ public abstract class BaseCoin {
         }
         return "";
     }
-    
-//    public double getTokenBalance(String addr, String contract){
-//        if (explorer!=null){
-//            return explorer.get_token_balance(addr, contract);
-//        } else {
-//            return (double)-1;
-//        }
-//    }
-//
-//    public HashMap<String, String> getTokenInfo(String contract){
-//        if (explorer!=null){
-//            return explorer.get_token_info(contract);
-//        } else {
-//            return new HashMap<String, String>();
-//        }
-//    }
-
-    // NFT API
-
-//    public List<Asset> getNftList(String address){
-//        if (nftExplorer!=null){
-//            return nftExplorer.get_nft_list(address);
-//        } else {
-//            return Collections.emptyList();
-//        }
-//    }
-
-//    public HashMap<String, String> getNftInfo(String contract, String tokenID){
-//        if (nftExplorer!=null){
-//            return nftExplorer.get_nft_info(contract, tokenID);
-//        } else {
-//            return new HashMap<String, String>();
-//        }
-//    }
-
-//    //todo deprecate
-//    public JSONObject getNftInfoJson(String contract, String tokenID){
-//        if (nftExplorer!=null){
-//            return nftExplorer.get_nft_info_json(contract, tokenID);
-//        } else {
-//            return new JSONObject();
-//        }
-//    }
 
     /*
      *   PRICE EXPLORER METHODS
      */
-
     public double get_exchange_rate_with(String other_coin){
         for (PriceExplorer explorer : priceExplorers){
             try{
@@ -312,14 +262,5 @@ public abstract class BaseCoin {
         }
         return -1;
     }
-    
-//    public double get_token_exchange_rate_between(String contract, String other_coin){
-//        if ((priceExplorer!=null) && (token_supported)){
-//            return  priceExplorer.get_token_exchange_rate_between(contract, other_coin);
-//        }
-//        else {
-//            return (double) -1;
-//        }
-//    }
         
 }

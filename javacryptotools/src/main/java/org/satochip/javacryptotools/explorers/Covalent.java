@@ -180,14 +180,5 @@ public class Covalent extends BaseExplorer implements Explorer {
             throw new RuntimeException("Covalent: failed to fetch Pol token balance: " + e);
         }
     }
-
-    public double get_token_balance(String addr, String contract) {
-        return 0.0;
-    }
-
-    public HashMap<String, String> get_token_info(String contract) {
-        HashMap<String, String> tokenInfo = new HashMap<String, String>();
-        return tokenInfo;
-    }
 }
 

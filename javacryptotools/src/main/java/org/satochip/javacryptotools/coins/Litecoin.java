@@ -53,7 +53,6 @@ public class Litecoin extends BaseCoin {
         } else{
             coin_symbol = "LTC";
             display_name = "Litecoin";
-            //explorer = sochain;
             magicbyte = 48;
             script_magicbyte = 50;
             // script_magicbyte = 5 //Old magicbyte still recognised by explorers
@@ -78,14 +77,6 @@ public class Litecoin extends BaseCoin {
         nft_supported= false;
         explorers.add(new Blockcypher(this, apikeys, logLevel));
         priceExplorers.add(new Coingecko(this, apikeys, logLevel));
-
-        //explorer= new Sochain(coin_symbol, apikeys);
-//        explorer= new Blockcypher(coin_symbol, apikeys, logLevel);
-//        if (is_testnet){
-//            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-//        }else{
-//            priceExplorer= new Coingecko("litecoin", apikeys, logLevel);
-//        }
     }
 
 }

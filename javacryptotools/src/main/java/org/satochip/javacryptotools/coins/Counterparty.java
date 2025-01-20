@@ -39,16 +39,6 @@ public class Counterparty extends BaseCoin {
         nft_supported= true;
         explorers.add(new Tokenscan(this, apikeys, logLevel));
         priceExplorers.add(new Coingecko(this, apikeys, logLevel));
-
-//        explorer= new Xchain(coin_symbol, apikeys, logLevel);
-//        nftExplorer= new Xchain(coin_symbol, apikeys, logLevel);
-//        if (is_testnet){
-//            //priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-//            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-//        }else{
-//            //priceExplorer= new Coingecko("xcp", apikeys, logLevel);
-//            priceExplorer= new CoinCombined("XCP", apikeys, logLevel);
-//        }
     }
 
 }

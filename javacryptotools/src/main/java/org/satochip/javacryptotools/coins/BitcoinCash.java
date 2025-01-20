@@ -85,19 +85,11 @@ public class BitcoinCash extends BaseCoin {
         nft_supported= false;
         explorers.add(new Fullstack(this, apikeys, logLevel));
         priceExplorers.add(new Coingecko(this, apikeys, logLevel));
-//        explorer= new Fullstack(coin, apikeys, logLevel);
-//        if (is_testnet){
-//            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-//        }else{
-//            priceExplorer= new Coingecko("bitcoin-cash", apikeys, logLevel);
-//        }
     }
 
     public String pubToAddress(byte[] pubkey){
         
         String legacy= pubToLegacyAddress(pubkey);
-        // CashAddress CASH = CashAddress.CASH;
-        // String cashAddress= CASH.encodeCashAdrressByLegacy(legacy);
         
         // compute hash160
         byte[] bytes;

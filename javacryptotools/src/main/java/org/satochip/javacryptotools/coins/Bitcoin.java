@@ -77,13 +77,6 @@ public class Bitcoin extends BaseCoin {
 
         explorers.add(new Blockstream(this, apikeys, logLevel));
         priceExplorers.add(new Coingecko(this, apikeys, logLevel));
-//        explorer= new Blockstream(this, apikeys, logLevel);
-//        if (is_testnet){
-//            priceExplorer= new Coingecko("testnet", apikeys, logLevel);
-//        }else{
-//            priceExplorer= new Coingecko("bitcoin", apikeys, logLevel);
-//        }
-
     }
 
 }

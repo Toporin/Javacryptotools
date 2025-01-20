@@ -10,9 +10,6 @@ import java.util.logging.Level;
 // Note: Coingate does not support Counterparty (XCP)
 public class Coingate extends BaseExplorer implements PriceExplorer{
 
-
-    //private final boolean isTestnet;
-
     public Coingate(BaseCoin coin, Map<String, String> apikeys){
         this(coin, apikeys, Level.WARNING);
     }
@@ -62,14 +59,5 @@ public class Coingate extends BaseExplorer implements PriceExplorer{
             return (double)-1;
         }
     }
-
-//    public double get_token_exchange_rate_between(String contract, String other_coin){
-//        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
-//    }
-//
-//    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
-//        //unsupported
-//        return -1;
-//    }
 
 }

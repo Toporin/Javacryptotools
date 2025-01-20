@@ -13,6 +13,8 @@ public class UnsupportedCoin extends BaseCoin {
         this(is_testnet, apikeys, Level.WARNING);
     }
     public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys, Level level){
+        super(level);
+
         segwit_supported = false;
         use_compressed_addr = false;
 
@@ -73,9 +75,6 @@ public class UnsupportedCoin extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorer= null;
-        nftExplorer= null;
-        priceExplorer= null;
     }
     
     public String encodePrivkey(byte[] privkey){

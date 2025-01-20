@@ -81,16 +81,6 @@ public class Ethereum extends BaseCoin {
         nft_supported= true;
         explorers.add(new Blockscout(this, apikeys, level));
         priceExplorers.add(new Coingecko(this, apikeys, level));
-//        explorer= new Ethplorer(coin_symbol, apikeys, logLevel);
-//        //nftExplorer= new Opensea(coin_symbol, apikeys);
-//        nftExplorer= new Rarible(coin_symbol, apikeys, logLevel);
-//        if (is_testnet){
-//            //priceExplorer= new Coingecko("testnet", apikeys);
-//            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-//        }else{
-//            //priceExplorer= new Coingecko("ethereum", apikeys);
-//            priceExplorer= new CoinCombined("ETH", apikeys, logLevel);
-//        }
     }
     
     // see https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java

@@ -75,20 +75,10 @@ public class Polygon extends Ethereum {
         token_supported = true;
         nft_supported = true;
 
-        System.out.println("JAVACRYPTOTOOLS DEBUG Polygon symbol:"+this.coin_symbol);
-
         // reset explorers instantiated in parent class Ethereum!
         explorers = new ArrayList<>();
         explorers.add(new Blockscout(this, apikeys, logLevel));
         priceExplorers = new ArrayList<>();
         priceExplorers.add(new Coingecko(this, apikeys, logLevel));
-
-//        explorer = new Covalent(coin_symbol, apikeys, logLevel);
-//        nftExplorer = new CovalentNFT(coin_symbol, apikeys, logLevel);
-//        if (is_testnet){
-//            priceExplorer= new CoinCombined("testnet", apikeys, logLevel);
-//        }else{
-//            priceExplorer= new CoinCombined("POL", apikeys, logLevel);
-//        }
     }
 }

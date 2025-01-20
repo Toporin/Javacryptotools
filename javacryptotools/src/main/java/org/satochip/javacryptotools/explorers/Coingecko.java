@@ -94,34 +94,5 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
         }
         
     }
-    
-//    public double get_token_exchange_rate_between(String contract, String other_coin){
-//        return get_token_exchange_rate_between(this.coin_symbol, contract, other_coin);
-//    }
-    
-//    public double get_token_exchange_rate_between(String coin, String contract, String other_coin){
-//        // https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce&vs_currencies=usd
-//        if (this.isTestnet){
-//            return (double)0;
-//        }
-//
-//        try{
-//            String base_url = get_api_url();
-//            String url= base_url + "simple/token_price/" + coin + "?contract_addresses="+contract + "&vs_currencies=" + other_coin;
-//            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
-//
-//            HttpsClient client= new HttpsClient(url);
-//            String content= client.request();
-//            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
-//
-//            // parse json
-//            JSONObject priceInfo = new JSONObject(content);
-//            JSONObject contractInfo = priceInfo.getJSONObject(contract);
-//            double rate= contractInfo.getDouble(other_coin);
-//            return rate;
-//        } catch (Exception e){
-//           return (double)-1;
-//        }
-//    }
       
 }

@@ -1,7 +1,5 @@
 package org.satochip.javacryptotools.explorers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
 import org.satochip.javacryptotools.coins.BaseCoin;
@@ -9,7 +7,6 @@ import org.satochip.javacryptotools.coins.BaseCoin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 public class Blockstream extends BaseExplorer implements Explorer{
@@ -65,13 +62,5 @@ public class Blockstream extends BaseExplorer implements Explorer{
         // unsupported
         return new ArrayList<Asset>();//return null;
     }
-
-//    public double get_token_balance(String address, String contract){
-//        return (double)-1;
-//    }
-//
-//    public HashMap<String, String> get_token_info(String contract){
-//        return new HashMap<String, String>();
-//    }
     
 }
