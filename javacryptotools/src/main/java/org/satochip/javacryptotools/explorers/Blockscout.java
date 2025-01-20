@@ -208,8 +208,10 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
         // Handle balance
         String value = item.optString("value", "0");
+        //System.out.println("DEBUG value: " + value);
         if (value!=null && !value.isEmpty() && !value.equals("null")){
             String decimals = token.optString("decimals", "0");
+            //System.out.println("DEBUG decimals: " + decimals);
             if (decimals!=null && !decimals.isEmpty() && !decimals.equals("null")){
                 asset.balance = convertToDecimalString(value, decimals);
             } else {

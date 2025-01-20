@@ -30,7 +30,7 @@ public class Coingate extends BaseExplorer implements PriceExplorer{
         return web_url;
     }
 
-    public double get_exchange_rate_between(String other_coin){
+    public double get_exchange_rate_with(String other_coin){
         if (this.coin.is_testnet){
             return 0;
         }

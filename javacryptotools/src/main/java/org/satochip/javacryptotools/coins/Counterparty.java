@@ -38,7 +38,7 @@ public class Counterparty extends BaseCoin {
         token_supported= true;
         nft_supported= true;
         explorers.add(new Tokenscan(this, apikeys, logLevel));
-        priceExplorers.add(new Coingecko(this, apikeys, logLevel));
+        priceExplorers.add(new CoinCombined(this, apikeys, logLevel));
     }
 
 }

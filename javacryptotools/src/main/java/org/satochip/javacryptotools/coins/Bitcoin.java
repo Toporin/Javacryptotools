@@ -76,7 +76,7 @@ public class Bitcoin extends BaseCoin {
         nft_supported= false;
 
         explorers.add(new Blockstream(this, apikeys, logLevel));
-        priceExplorers.add(new Coingecko(this, apikeys, logLevel));
+        priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 
 }

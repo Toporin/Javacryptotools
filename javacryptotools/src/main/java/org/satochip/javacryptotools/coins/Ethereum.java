@@ -80,7 +80,7 @@ public class Ethereum extends BaseCoin {
         token_supported= true;
         nft_supported= true;
         explorers.add(new Blockscout(this, apikeys, level));
-        priceExplorers.add(new Coingecko(this, apikeys, level));
+        priceExplorers.add(new Coingate(this, apikeys, level));
     }
     
     // see https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java

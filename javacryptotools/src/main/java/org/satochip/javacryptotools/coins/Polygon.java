@@ -79,6 +79,6 @@ public class Polygon extends Ethereum {
         explorers = new ArrayList<>();
         explorers.add(new Blockscout(this, apikeys, logLevel));
         priceExplorers = new ArrayList<>();
-        priceExplorers.add(new Coingecko(this, apikeys, logLevel));
+        priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 }

@@ -4,12 +4,9 @@ package org.satochip.javacryptotools.explorers;
 // import org.json.JSONException;
 // import org.json.JSONObject;
 
-import java.util.Map;
-import java.util.HashMap;
-
 public interface PriceExplorer {
 
-    public double get_exchange_rate_between(String other_coin);
+    public double get_exchange_rate_with(String other_coin);
     
     public double get_exchange_rate_between(String coin, String other_coin);
 

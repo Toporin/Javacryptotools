@@ -253,14 +253,21 @@ public abstract class BaseCoin {
      *   PRICE EXPLORER METHODS
      */
     public double get_exchange_rate_with(String other_coin){
+        return get_exchange_rate_between(this.coin_symbol, other_coin);
+    }
+
+    public double get_exchange_rate_between(String coin, String other_coin){
         for (PriceExplorer explorer : priceExplorers){
             try{
-                return explorer.get_exchange_rate_between(other_coin);
+                double rate = explorer.get_exchange_rate_between(coin, other_coin);
+                if (rate >= 0) {
+                    return rate;
+                }
             } catch (Exception e) {
                 logger.info("JAVACRYPTOTOOLS: failed to get rate from " + explorer + " with error: " + e);
             }
         }
         return -1;
     }
-        
+
 }
