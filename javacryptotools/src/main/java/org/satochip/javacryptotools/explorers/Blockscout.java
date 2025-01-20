@@ -59,8 +59,13 @@ public class Blockscout extends BaseExplorer implements Explorer {
         logger.info("JAVACRYPTOTOOLS blockscout get_balance coin_symbol: " + coin_symbol);
         try {
             String url = getAPIURL() + "addresses/" + addr;
+
             HttpsClient client= new HttpsClient(url);
-            String content= client.request();
+            String content = client.request();
+            if (content.isEmpty()) {
+                // throws java.io.FileNotFoundException when address is not found in db
+                return 0;
+            }
 
             JSONObject json = new JSONObject(content);
             String coinBalanceWei = json.optString("coin_balance", "0");
@@ -93,10 +98,14 @@ public class Blockscout extends BaseExplorer implements Explorer {
         try {
             do {
                 String url = getAPIURL() + "addresses/" + addr + "/tokens?type=ERC-20" + nextPageParams;
-                logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list url: " + url);
+                logger.warning("JAVACRYPTOTOOLS: Blockscout get_token_list url: " + url);
 
                 HttpsClient client= new HttpsClient(url);
                 String content = client.request();
+                if (content.isEmpty()) {
+                    // throws java.io.FileNotFoundException when address is not found in db
+                    return assetList;
+                }
 
                 JSONObject json = new JSONObject(content);
                 JSONArray items = json.getJSONArray("items");
@@ -115,13 +124,13 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
                 // pagination
                 nextPageParams = parseNextPageParams(json.optJSONObject("next_page_params"), false);
-                logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list nextPageParams: " + nextPageParams);
+                logger.info("JAVACRYPTOTOOLS: Blockscout get_token_list nextPageParams: " + nextPageParams);
 
             } while (!nextPageParams.isEmpty());
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Blockscout: failed to fetch asset list!");
+            throw new RuntimeException("Blockscout: failed to fetch token list!");
         }
 
         return assetList;
@@ -140,6 +149,10 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
                 HttpsClient client= new HttpsClient(url);
                 String content = client.request();
+                if (content.isEmpty()) {
+                    // throws java.io.FileNotFoundException when address is not found in db
+                    return assetList;
+                }
 
                 JSONObject json = new JSONObject(content);
                 JSONArray items = json.getJSONArray("items");
@@ -164,7 +177,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Blockscout: failed to fetch asset list!");
+            throw new RuntimeException("Blockscout: failed to fetch nft list!");
         }
 
         return assetList;
