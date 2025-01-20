@@ -20,15 +20,9 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
     public Blockscout(BaseCoin coin, Map<String, String> apikeys){
         this(coin, apikeys, Level.WARNING);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init coin_symbol: " + coin.coin_symbol);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init coin_symbol2: " + coin_symbol);
     }
     public Blockscout(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
         super(coin, apikeys, logLevel);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init2 logLevel: " + logLevel);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init2 logger.getLevel(): " + logger.getLevel());
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init2 coin_symbol: " + coin.coin_symbol);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout init2 coin_symbol2: " + coin_symbol);
     }
 
     private String getWebURL() {
@@ -40,8 +34,6 @@ public class Blockscout extends BaseExplorer implements Explorer {
         urls.put("BASE", "https://base.blockscout.com/");
         urls.put("BASETEST", "https://base-sepolia.blockscout.com/");
         urls.put("POL", "https://polygon.blockscout.com/");
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout getWebURL coin_symbol: " + coin_symbol);
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout getWebURL url: " + urls.getOrDefault(coin_symbol, "https://notfound.org/"));
         return urls.getOrDefault(coin_symbol, "https://notfound.org/");
     }
 
@@ -64,7 +56,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
     @Override
     public double get_balance(String addr) {
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout get_balance coin_symbol: " + coin_symbol);
+        logger.info("JAVACRYPTOTOOLS blockscout get_balance coin_symbol: " + coin_symbol);
         try {
             String url = getAPIURL() + "addresses/" + addr;
             HttpsClient client= new HttpsClient(url);
@@ -84,36 +76,37 @@ public class Blockscout extends BaseExplorer implements Explorer {
     @Override
     public List<Asset> get_asset_list(String addr) {
         logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list start");
-        logger.warning("JAVACRYPTOTOOLS: Blockscout start");
-        System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout start");
-        System.out.println("DEBUG JAVACRYPTOTOOLS blockscout get_asset_list coin_symbol: " + coin_symbol);
 
+        List<Asset> assetList = get_token_list(addr);
+        List<Asset> nftList = get_nft_list(addr);
+        assetList.addAll(nftList);
+
+        return assetList;
+    }
+
+    public List<Asset> get_token_list(String addr) {
+        logger.info("JAVACRYPTOTOOLS: Blockscout get_token_list start");
 
         List<Asset> assetList = new ArrayList<>();
         String nextPageParams = "";
 
         try {
             do {
-                String url = getAPIURL() + "addresses/" + addr + "/tokens" + nextPageParams;
-                logger.warning("JAVACRYPTOTOOLS: Blockscout get_asset_list url: " + url);
+                String url = getAPIURL() + "addresses/" + addr + "/tokens?type=ERC-20" + nextPageParams;
+                logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list url: " + url);
 
                 HttpsClient client= new HttpsClient(url);
                 String content = client.request();
-                logger.info("JAVACRYPTOTOOLS: Blockscout request content: " + content);
-                logger.warning("JAVACRYPTOTOOLS: Blockscout request content: " + content);
-                System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout request content: " + content);
 
                 JSONObject json = new JSONObject(content);
                 JSONArray items = json.getJSONArray("items");
-                System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout get_asset_list items: " + items);
-
 
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject item = items.getJSONObject(i);
-                    System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout get_asset_list item: " + item);
+                    //logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list item: " + item);
 
                     Asset asset = parseAssetFromJson(item, addr);
-                    System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout get_asset_list asset: " + asset);
+                    //logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list asset: " + asset);
 
                     if (asset != null) {
                         assetList.add(asset);
@@ -121,8 +114,51 @@ public class Blockscout extends BaseExplorer implements Explorer {
                 }
 
                 // pagination
-                nextPageParams = parseNextPageParams(json.optJSONObject("next_page_params"));
-                System.out.println("PRINT JAVACRYPTOTOOLS: Blockscout get_asset_list nextPageParams: " + nextPageParams);
+                nextPageParams = parseNextPageParams(json.optJSONObject("next_page_params"), false);
+                logger.info("JAVACRYPTOTOOLS: Blockscout get_asset_list nextPageParams: " + nextPageParams);
+
+            } while (!nextPageParams.isEmpty());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Blockscout: failed to fetch asset list!");
+        }
+
+        return assetList;
+    }
+
+    public List<Asset> get_nft_list(String addr) {
+        logger.info("JAVACRYPTOTOOLS: Blockscout get_nft_list start");
+
+        List<Asset> assetList = new ArrayList<>();
+        String nextPageParams = "";
+
+        try {
+            do {
+                String url = getAPIURL() + "addresses/" + addr + "/nft" + nextPageParams;
+                logger.info("JAVACRYPTOTOOLS: Blockscout get_nft_list url: " + url);
+
+                HttpsClient client= new HttpsClient(url);
+                String content = client.request();
+
+                JSONObject json = new JSONObject(content);
+                JSONArray items = json.getJSONArray("items");
+
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject item = items.getJSONObject(i);
+                    logger.info("JAVACRYPTOTOOLS: Blockscout get_nft_list item: " + item);
+
+                    Asset asset = parseAssetFromJson(item, addr);
+                    logger.info("JAVACRYPTOTOOLS: Blockscout get_nft_list asset: " + asset);
+
+                    if (asset != null) {
+                        assetList.add(asset);
+                    }
+                }
+
+                // pagination
+                nextPageParams = parseNextPageParams(json.optJSONObject("next_page_params"), true);
+                logger.info("JAVACRYPTOTOOLS: Blockscout get_nft_list nextPageParams: " + nextPageParams);
 
             } while (!nextPageParams.isEmpty());
 
@@ -136,18 +172,28 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
     private Asset parseAssetFromJson(JSONObject item, String addr) {
         JSONObject token = item.getJSONObject("token");
-        String addressContract = token.optString("address", "");
-        String type = token.optString("type", "");
 
-        if (addressContract.isEmpty() || type.isEmpty()) {
+        if (token==null) {
             return null;
         }
 
         Asset asset = new Asset();
-        asset.name = token.optString("name", "");
-        asset.contract = addressContract;
+        String name = token.optString("name");
+        if (name!=null && !name.equals("null")){
+            asset.name = name;
+        }
+        String contract = token.optString("address");
+        if (contract!=null && !contract.equals("null")){
+            asset.contract = contract;
+        }
+        String symbol = token.optString("symbol");
+        if (symbol!=null && !symbol.equals("null")){
+            asset.symbol = symbol;
+        }
         asset.iconUrl = token.optString("icon_url", "");
+        asset.description = token.optString("description", "");
 
+        String type = token.optString("type", "");
         switch (type) {
             case "ERC-20":
                 asset.type = AssetType.Token;
@@ -157,7 +203,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
                 asset.type = AssetType.NFT;
                 break;
             default:
-                return null;
+                asset.type = AssetType.Token;
         }
 
         // Handle balance
@@ -166,6 +212,8 @@ public class Blockscout extends BaseExplorer implements Explorer {
             String decimals = token.optString("decimals", "0");
             if (decimals!=null && !decimals.isEmpty() && !decimals.equals("null")){
                 asset.balance = convertToDecimalString(value, decimals);
+            } else {
+                asset.balance = convertToDecimalString(value, "0");
             }
         }
 
@@ -184,24 +232,32 @@ public class Blockscout extends BaseExplorer implements Explorer {
         }
 
         // Handle NFT specific data
-        if (item.has("token_instance")) {
-            JSONObject tokenInstance = item.optJSONObject("token_instance");
-            if (tokenInstance != null){
-                String tokenId = tokenInstance.optString("id", "");
-                if (tokenId!=null && !tokenId.isEmpty() && !tokenId.equals("null")) {
-                    asset.tokenid = tokenId;
-                    asset.nftExplorerLink = getNFTWebURL(addressContract, tokenId);
-                } else {
-                    // can be a ERC-1155 token with multiple nfts
-                    asset.nftExplorerLink = getTokenWebURL(addressContract) + "?tab=inventory&holder_address_hash=" + addr;
-                }
-                asset.nftImageLink = tokenInstance.optString("image_url", "");
+        String image_url = item.optString("image_url");
+        if (image_url!=null && !image_url.isEmpty() && !image_url.equals("null")) {
+            asset.nftImageLink = image_url;
+        }
+        String tokenId = item.optString("id", "");
+        if (tokenId!=null && !tokenId.isEmpty() && !tokenId.equals("null")) {
+            asset.tokenid = tokenId;
+            asset.nftExplorerLink = getNFTWebURL(contract, tokenId);
+        } else {
+            // can be a ERC-1155 token with multiple nfts
+            asset.nftExplorerLink = getTokenWebURL(contract) + "?tab=inventory&holder_address_hash=" + addr;
+        }
+        JSONObject metadata = item.optJSONObject("metadata");
+        if (metadata != null){
+            String description = metadata.optString("description");
+            if (description!=null && !description.isEmpty() && !description.equals("null")) {
+                asset.nftDescription = description;
             }
-
+            String nftName = metadata.optString("name");
+            if (nftName!=null && !nftName.isEmpty() && !nftName.equals("null")) {
+                asset.nftName = nftName;
+            }
         }
 
         // Set explorer URLs
-        asset.explorerLink = getTokenWebURL(addressContract);
+        asset.explorerLink = getTokenWebURL(contract);
         return asset;
     }
 
@@ -226,7 +282,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
         }
     }
 
-    private String parseNextPageParams(JSONObject params) {
+    private String parseNextPageParams(JSONObject params, Boolean withHeader) {
         if (params == null) {
             return "";
         }
@@ -237,7 +293,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
         for (String key : params.keySet()) {
             String value = params.optString(key, "");
 
-            if (first) {
+            if (first && withHeader) {
                 queryString.append("?");
                 first = false;
             } else {
