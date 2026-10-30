@@ -19,6 +19,7 @@ public class HttpsClient{
     
     public String https_url;
     public HashMap<String,String> headers = null;
+    public int responseCode = -1; // HTTP status code of the last request, or -1 if unavailable
 
    // public static void main(String[] args)
    // {
@@ -56,6 +57,7 @@ public class HttpsClient{
                 
              //dump all the content
              content= print_content(con);
+             responseCode= con.getResponseCode();
 			    
         } catch (MalformedURLException e) {
             e.printStackTrace();

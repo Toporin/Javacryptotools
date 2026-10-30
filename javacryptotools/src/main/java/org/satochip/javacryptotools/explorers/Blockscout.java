@@ -62,8 +62,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
             HttpsClient client= new HttpsClient(url);
             String content = client.request();
-            if (content.isEmpty()) {
-                // throws java.io.FileNotFoundException when address is not found in db
+            if (isNotFound(client, content)) {
                 return 0;
             }
 
@@ -102,8 +101,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
                 HttpsClient client= new HttpsClient(url);
                 String content = client.request();
-                if (content.isEmpty()) {
-                    // throws java.io.FileNotFoundException when address is not found in db
+                if (isNotFound(client, content)) {
                     return assetList;
                 }
 
@@ -149,8 +147,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
 
                 HttpsClient client= new HttpsClient(url);
                 String content = client.request();
-                if (content.isEmpty()) {
-                    // throws java.io.FileNotFoundException when address is not found in db
+                if (isNotFound(client, content)) {
                     return assetList;
                 }
 
@@ -276,6 +273,18 @@ public class Blockscout extends BaseExplorer implements Explorer {
         // Set explorer URLs
         asset.explorerLink = getTokenWebURL(contract);
         return asset;
+    }
+
+    // An empty response means the request failed. Only a 404 error (address not found in db,
+    // which throws java.io.FileNotFoundException) is a valid answer, other errors are reported.
+    private boolean isNotFound(HttpsClient client, String content) {
+        if (content != null && !content.isEmpty()) {
+            return false;
+        }
+        if (client.responseCode == 404) {
+            return true;
+        }
+        throw new RuntimeException("Blockscout: request failed with HTTP code " + client.responseCode);
     }
 
     private double convertWeiToEther(String weiAmount) {
