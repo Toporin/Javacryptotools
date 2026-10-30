@@ -60,13 +60,51 @@ In the future, the library will also be available on Maven central repository.
 
 ## Tests
 
+Tests are located in `javacryptotools/src/test/java/javacryptotools/` and use JUnit 5.
+They are split in two groups: offline unit tests and online integration tests.
+
+### Offline unit tests
+
+Offline tests do not require network access or API keys. They cover address generation and WIF encoding
+for all supported coins (mainnet & testnet), coin metadata, explorer urls, explorer fallback logic,
+token/NFT parsing (using recorded API responses in `javacryptotools/src/test/resources/`) and low-level encodings.
+
 ```
-./gradlew test             # offline unit tests
-./gradlew integrationTest  # tests against third-party APIs (requires network access)
+./gradlew test
 ```
 
-Integration tests read API keys from `api_keys.ini` in the project root (ignored by git):
-copy `api_keys(sample).ini` to `api_keys.ini` and fill in your keys. Tests requiring a missing key are skipped.
+Useful options:
+
+```
+./gradlew test --tests "javacryptotools.CoinTest"                         # run a single test class
+./gradlew test --tests "javacryptotools.CoinTest.ethereum_toChecksumAddress_followsEip55"  # run a single test
+./gradlew test --rerun-tasks                                              # force re-run when Gradle reports the task as up-to-date
+```
+
+### Online integration tests
+
+Integration tests (JUnit tag `network`, class `NetworkTest`) send real requests to the third-party APIs used by the library,
+and check balances, token & NFT lists and fiat exchange rates for each supported coin. They require network access,
+and some of them require API keys:
+
+1. Copy the API keys template to `api_keys.ini` in the project root (this file is ignored by git, never commit your keys):
+   ```
+   cp "api_keys(sample).ini" api_keys.ini
+   ```
+2. Edit `api_keys.ini` and replace the placeholders with your own keys (e.g. `API_KEY_ALCHEMY` for Polygon).
+   Tests requiring a missing key are skipped instead of failing.
+3. Run the integration tests:
+   ```
+   ./gradlew integrationTest
+   ```
+
+Integration tests are never considered up-to-date by Gradle, so they always run.
+Results depend on external services: a failure may be caused by a temporary outage or rate limit of a third-party API.
+
+To run both offline and online tests: `./gradlew test integrationTest`.
+
+Test reports are generated in `javacryptotools/build/reports/tests/test/index.html`
+and `javacryptotools/build/reports/tests/integrationTest/index.html`.
 
 ## License and attribution
 
