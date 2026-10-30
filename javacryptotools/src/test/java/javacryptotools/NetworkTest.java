@@ -12,9 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,6 +49,7 @@ class NetworkTest {
     static final String LTC_ADDRESS = "LQTpS3VaYTjCr4s9Y1t5zbeY26zevf7Fb3";
     static final String ETH_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa"; // locked ETH
     static final String VITALIK = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    static final String BCHTEST_ADDRESS = "bchtest:qps822p04zpg676v6krnwhjhtqx44klcvqjrg353rc"; // chipnet
     static final String XCP_BURN_PEPE = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R";
     static final String XCPTEST_ADDRESS = "mvCounterpartyXXXXXXXXXXXXXXW24Hef";
 
@@ -93,6 +92,8 @@ class NetworkTest {
                 new Case("BTCTEST", keys -> new Bitcoin(true, keys), BTCTEST_FAUCET, false, null),
                 new Case("LTC", keys -> new Litecoin(false, keys), LTC_ADDRESS, false, null),
                 new Case("LTCTEST", keys -> new Litecoin(true, keys), ADDRESS_SEGWIT_LTCTEST[0], false, null),
+                new Case("BCH", keys -> new BitcoinCash(false, keys), BCH_GENESIS, true, null),
+                new Case("BCHTEST", keys -> new BitcoinCash(true, keys), BCHTEST_ADDRESS, false, null),
                 new Case("XCP", keys -> new Counterparty(false, keys), XCP_BURN_PEPE, false, null),
                 new Case("XCPTEST", keys -> new Counterparty(true, keys), XCPTEST_ADDRESS, false, null),
                 new Case("ETH", keys -> new Ethereum(false, keys), ETH_DEPOSIT_CONTRACT, true, null),
@@ -111,20 +112,6 @@ class NetworkTest {
         } else {
             assertTrue(balance >= 0, "balance request failed (got " + balance + ")");
         }
-    }
-
-    static final String FULLSTACK_DOWN = "Fullstack API (api.fullstack.cash) returns an html page instead of json: BCH explorer needs a replacement";
-
-    @Disabled(FULLSTACK_DOWN)
-    @Test
-    void getBalance_bch() {
-        getBalance(new Case("BCH", keys -> new BitcoinCash(false, keys), BCH_GENESIS, true, null));
-    }
-
-    @Disabled(FULLSTACK_DOWN)
-    @Test
-    void getBalance_bchTestnet() {
-        getBalance(new Case("BCHTEST", keys -> new BitcoinCash(true, keys), ADDRESS_CASHADDR_BCHTEST[0], false, null));
     }
 
     /*

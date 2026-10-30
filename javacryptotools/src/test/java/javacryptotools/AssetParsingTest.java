@@ -20,12 +20,14 @@ import org.junit.jupiter.api.Test;
 
 import org.satochip.javacryptotools.coins.Asset;
 import org.satochip.javacryptotools.coins.AssetType;
+import org.satochip.javacryptotools.coins.BitcoinCash;
 import org.satochip.javacryptotools.coins.Counterparty;
 import org.satochip.javacryptotools.coins.Ethereum;
 import org.satochip.javacryptotools.coins.Polygon;
 import org.satochip.javacryptotools.explorers.Alchemy;
 import org.satochip.javacryptotools.explorers.Blockscout;
 import org.satochip.javacryptotools.explorers.Etherscan;
+import org.satochip.javacryptotools.explorers.Fulcrum;
 import org.satochip.javacryptotools.explorers.Tokenscan;
 
 // Offline tests for token & NFT parsing, using recorded API responses from src/test/resources
@@ -328,5 +330,25 @@ class AssetParsingTest {
             assertEquals(-1, coin.getBalance(AMOY_OWNER));
             assertNull(coin.getAssetList(AMOY_OWNER));
         }
+    }
+
+    /*
+     *   FULCRUM (Bitcoin Cash)
+     */
+
+    @Test
+    void fulcrum_balance() {
+        Fulcrum explorer = new Fulcrum(new BitcoinCash(false, null), null);
+        JSONObject result = new JSONObject("{\"confirmed\":5769114173,\"unconfirmed\":3672}");
+        assertEquals(57.69114173, explorer.parse_balance(result)); // unconfirmed balance is ignored
+    }
+
+    @Test
+    void fulcrum_serversPerNetwork() {
+        Fulcrum mainnet = new Fulcrum(new BitcoinCash(false, null), null);
+        Fulcrum chipnet = new Fulcrum(new BitcoinCash(true, null), null);
+        assertTrue(mainnet.get_servers().contains("bch.imaginary.cash:50002"));
+        assertTrue(chipnet.get_servers().contains("chipnet.imaginary.cash:50002"));
+        assertTrue(java.util.Collections.disjoint(mainnet.get_servers(), chipnet.get_servers()));
     }
 }

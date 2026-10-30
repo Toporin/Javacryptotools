@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+// Deprecated: the Fullstack.cash API now returns an html page instead of json.
+// Bitcoin Cash uses the Fulcrum explorer instead. Kept for backward compatibility.
 //Docs: https://api.fullstack.cash/docs/
 // see also https://api.fullstack.cash/ 
 // see also https://tapi.fullstack.cash/

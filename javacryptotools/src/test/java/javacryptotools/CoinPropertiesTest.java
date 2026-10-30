@@ -26,7 +26,7 @@ import org.satochip.javacryptotools.explorers.Blockscout;
 import org.satochip.javacryptotools.explorers.Blockstream;
 import org.satochip.javacryptotools.explorers.CoinCombined;
 import org.satochip.javacryptotools.explorers.Coingate;
-import org.satochip.javacryptotools.explorers.Fullstack;
+import org.satochip.javacryptotools.explorers.Fulcrum;
 import org.satochip.javacryptotools.explorers.LitecoinSpace;
 import org.satochip.javacryptotools.explorers.Tokenscan;
 
@@ -95,12 +95,12 @@ class CoinPropertiesTest {
                         ADDRESS_SEGWIT_LTCTEST[0], "https://litecoinspace.org/testnet/address/" + ADDRESS_SEGWIT_LTCTEST[0]),
                 new Case(() -> new BitcoinCash(false, null), false, "BCH", "Bitcoin Cash",
                         false, true, false, false,
-                        classes(Fullstack.class), classes(Coingate.class),
-                        ADDRESS_CASHADDR_BCH[0], "https://www.blockchain.com/bch/address/" + ADDRESS_CASHADDR_BCH[0]),
+                        classes(Fulcrum.class), classes(Coingate.class),
+                        ADDRESS_CASHADDR_BCH[0], "https://blockchair.com/bitcoin-cash/address/" + ADDRESS_CASHADDR_BCH[0]),
                 new Case(() -> new BitcoinCash(true, null), true, "BCHTEST", "Bitcoin Cash Testnet",
                         false, true, false, false,
-                        classes(Fullstack.class), classes(Coingate.class),
-                        ADDRESS_CASHADDR_BCHTEST[0], "https://www.blockchain.com/bch-testnet/address/" + ADDRESS_CASHADDR_BCHTEST[0]),
+                        classes(Fulcrum.class), classes(Coingate.class),
+                        ADDRESS_CASHADDR_BCHTEST[0], ""), // no web explorer for chipnet
                 new Case(() -> new Counterparty(false, null), false, "XCP", "Counterparty",
                         false, true, true, true,
                         classes(Tokenscan.class), classes(CoinCombined.class),

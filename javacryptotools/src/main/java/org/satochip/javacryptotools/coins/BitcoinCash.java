@@ -84,7 +84,7 @@ public class BitcoinCash extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorers.add(new Fullstack(this, apikeys, logLevel));
+        explorers.add(new Fulcrum(this, apikeys, logLevel));
         priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 
