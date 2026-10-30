@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "animation_url": null,
+      "external_app_url": null,
+      "id": "1",
+      "image_url": "https://dweb.link/ipfs/bafybeibo4tcontw552fzna7mickr7mf7kpexvcehlf5soworjeznooryfy",
+      "is_unique": null,
+      "media_type": null,
+      "media_url": "ipfs://bafybeibo4tcontw552fzna7mickr7mf7kpexvcehlf5soworjeznooryfy",
+      "metadata": {
+        "description": "Mint first\nReveal after\nHold tight",
+        "image": "ipfs://bafybeibo4tcontw552fzna7mickr7mf7kpexvcehlf5soworjeznooryfy",
+        "name": "Vitalik RGB"
+      },
+      "owner": null,
+      "thumbnails": null,
+      "token": {
+        "address_hash": "0x010D1B562B3515839563f84d0AEbA146fD92Df7a",
+        "circulating_market_cap": null,
+        "circulating_supply": null,
+        "decimals": null,
+        "exchange_rate": null,
+        "holders_count": "145",
+        "icon_url": null,
+        "name": "Vitalik RGB",
+        "reputation": "ok",
+        "symbol": "vRGB",
+        "total_supply": "565",
+        "type": "ERC-721",
+        "volume_24h": null
+      },
+      "token_type": "ERC-721",
+      "value": "1"
+    },
+    {
+      "animation_url": null,
+      "external_app_url": null,
+      "id": "746",
+      "image_url": null,
+      "is_unique": null,
+      "media_type": null,
+      "media_url": null,
+      "metadata": null,
+      "owner": null,
+      "thumbnails": null,
+      "token": {
+        "address_hash": "0x00703F9B11F2ac02D391A11E7b97c6eE80Cd8563",
+        "circulating_market_cap": null,
+        "circulating_supply": null,
+        "decimals": null,
+        "exchange_rate": null,
+        "holders_count": "31",
+        "icon_url": null,
+        "name": "Elon Musk",
+        "reputation": "ok",
+        "symbol": "MUSK",
+        "total_supply": null,
+        "type": "ERC-721",
+        "volume_24h": null
+      },
+      "token_type": "ERC-721",
+      "value": "1"
+    },
+    {
+      "id": null,
+      "image_url": null,
+      "metadata": null,
+      "token": {
+        "address_hash": "0x2222222222222222222222222222222222222222",
+        "decimals": null,
+        "exchange_rate": null,
+        "icon_url": null,
+        "name": "Multi Edition",
+        "symbol": "MED",
+        "type": "ERC-1155"
+      },
+      "token_type": "ERC-1155",
+      "value": "3"
+    }
+  ],
+  "next_page_params": {
+    "token_type": "ERC-721",
+    "token_id": "567",
+    "token_contract_address_hash": "0x026debba6a0e1f8b24923363073e99be3e4075a8",
+    "items_count": 50
+  }
+}

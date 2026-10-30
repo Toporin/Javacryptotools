@@ -88,7 +88,7 @@ public class Tokenscan extends BaseExplorer implements Explorer {
         return assetList;
     }
 
-    private Asset parseAssetFromJson(JSONObject item, String addr) {
+    public Asset parseAssetFromJson(JSONObject item, String addr) {
         String name = item.optString("asset", "");
 
         // Skip XCP native coin

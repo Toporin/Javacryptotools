@@ -1,0 +1,63 @@
+{
+  "address": "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R",
+  "data": [
+    {
+      "asset": "XCP",
+      "asset_longname": "",
+      "collections": [],
+      "description": "",
+      "estimated_value": {
+        "btc": "0.0",
+        "usd": "7.75",
+        "xcp": "1.0"
+      },
+      "quantity": "1.50000000"
+    },
+    {
+      "asset": "A6900000000000001774",
+      "asset_longname": "",
+      "collections": [],
+      "description": "LP token for PEPECASH/XCP pool",
+      "estimated_value": {
+        "btc": "0.00013860",
+        "usd": "10.75",
+        "xcp": "2.36785798"
+      },
+      "quantity": "33.00000000"
+    },
+    {
+      "asset": "BAGHOLDRPEPE",
+      "asset_longname": "",
+      "collections": [
+        "rare-pepe"
+      ],
+      "description": "",
+      "estimated_value": {
+        "btc": "0.00600000",
+        "usd": "465.28",
+        "xcp": "102.50467438"
+      },
+      "quantity": "1"
+    },
+    {
+      "asset": "IMGURPEPE",
+      "asset_longname": "",
+      "collections": [],
+      "description": "*imgur/AbCdEf1.png;Imgur Pepe",
+      "estimated_value": {
+        "btc": "0.0",
+        "usd": "",
+        "xcp": "0.0"
+      },
+      "quantity": "2"
+    },
+    {
+      "asset": "PNGPEPE",
+      "asset_longname": "",
+      "collections": [],
+      "description": "https://example.com/pepe.png",
+      "estimated_value": null,
+      "quantity": "1"
+    }
+  ]
+}
