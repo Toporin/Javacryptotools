@@ -22,9 +22,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Run network integration tests (tagged "network", excluded from ./gradlew test)
 ./gradlew integrationTest
+
+# Publish to the local Maven repository (same command as JitPack, see jitpack.yml)
+./gradlew clean build publishToMavenLocal
 ```
 
 The output JAR is produced at `javacryptotools/build/libs/javacryptotools-<version>.jar`.
+
+The library is published on JitPack (`com.github.Toporin:Javacryptotools:<tag>`), built from git tags with `jitpack.yml`. Main code is compiled to Java 8 bytecode (`options.release = 8`) for Android compatibility: do not use Java 9+ APIs in `src/main`, and avoid org.json methods missing from Android's built-in org.json (e.g. `JSONObject.keySet()`).
 
 ## Architecture
 

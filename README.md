@@ -1,5 +1,7 @@
 # Javacryptotools - java library for simple crypto coins integration
 
+[![](https://jitpack.io/v/Toporin/Javacryptotools.svg)](https://jitpack.io/#Toporin/Javacryptotools)
+
 Simple java library that allows to integrate crypto coins info into java & android project.
 
 Coins supported currently:
@@ -47,16 +49,88 @@ apikeys.put("API_KEY_ALCHEMY", "YOUR_ALCHEMY_API_KEY"); // required for Polygon
 Polygon coin = new Polygon(true, apikeys);
 ```
 
-## Build and Usage
+## Installation
 
-You can build the jar file with ```./gradlew clean build```
+The library is published on [JitPack](https://jitpack.io/#Toporin/Javacryptotools) and can be used
+in Android applications and desktop Java applications (Java 8 or higher).
 
-You can import the different libraries in your Gradle project by placing the .jar library in a folder (e.g. 'libs')
-and by adding the following line in the *dependencies* section of your *build.gradle* file:
+Replace `<version>` with a release tag (e.g. `v0.4.1`), a commit hash, or `<branch>-SNAPSHOT`.
 
-```api files('libs/javacryptotools-0.2.0.jar')```
+### Gradle
 
-In the future, the library will also be available on Maven central repository.
+Add the JitPack repository. With a recent Gradle setup (e.g. Android projects), in `settings.gradle`:
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Or, with an older setup, in the `repositories` section of your `build.gradle`:
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+```
+
+Then add the dependency in your module `build.gradle`:
+
+```groovy
+dependencies {
+    implementation 'com.github.Toporin:Javacryptotools:<version>'
+}
+```
+
+With the Kotlin DSL (`build.gradle.kts`), use `maven("https://jitpack.io")` and
+`implementation("com.github.Toporin:Javacryptotools:<version>")`.
+
+### Maven
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.Toporin</groupId>
+    <artifactId>Javacryptotools</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
+
+### Android notes
+
+- Explorer methods (`getBalance`, `getAssetList`, `get_exchange_rate_with`...) perform blocking network requests:
+  call them from a background thread, not from the main thread.
+- Add the `android.permission.INTERNET` permission to your `AndroidManifest.xml`.
+
+### Build from source
+
+```
+./gradlew clean build
+```
+
+The jar file is generated in `javacryptotools/build/libs/`. It can also be published to your local Maven repository
+(`~/.m2`) with `./gradlew publishToMavenLocal` (coordinates `com.github.Toporin:javacryptotools:<version>`).
+
+### Publishing a new release
+
+JitPack builds the library on demand from GitHub, using the configuration in `jitpack.yml`
+(JDK 17, offline unit tests run before publishing). To publish a new release:
+
+1. update `version` in `javacryptotools/build.gradle` and the `CHANGELOG.md`;
+2. create and push a git tag, e.g. `git tag v0.4.1 && git push origin v0.4.1` (optionally, create a GitHub release);
+3. open https://jitpack.io/#Toporin/Javacryptotools and click "Get it" for the new tag to trigger the build
+   (or simply request the new version from a consumer project). Build logs are available on the same page.
 
 ## Tests
 

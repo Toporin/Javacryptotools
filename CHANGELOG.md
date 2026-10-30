@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Rewrite Etherscan explorer for API V2 (ETH, Sepolia, Polygon, Amoy); not used by default, requires API_KEY_ETHERSCAN
 * Fix Blockscout explorer returning a zero balance / empty asset list when a request fails
 * Add network integration tests (./gradlew integrationTest) using API keys from api_keys.ini (template: api_keys(sample).ini)
+* Publish on JitPack (com.github.Toporin:Javacryptotools:<tag>): maven-publish configuration, jitpack.yml, Gradle wrapper tracked in git
+* Compile library to Java 8 bytecode for Android and older JVMs
+* Fix Blockscout pagination on Android (JSONObject.keySet() is missing from Android's org.json)
 
 ## [0.4.0]:
 
