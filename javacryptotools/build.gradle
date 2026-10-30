@@ -42,9 +42,31 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // tests requiring network access run with the integrationTest task
+        excludeTags 'network'
+    }
     testLogging {
         events "passed", "skipped", "failed"
         showStandardStreams = true
+    }
+}
+
+// Integration tests against third-party APIs (explorers & price APIs).
+// API keys are read from api_keys.ini in the root project (see api_keys(sample).ini).
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests that require network access to third-party APIs.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'network'
+    }
+    systemProperty 'apikeys.file', rootProject.file('api_keys.ini').absolutePath
+    // results depend on external services: never consider the task up-to-date
+    outputs.upToDateWhen { false }
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
     }
 }
