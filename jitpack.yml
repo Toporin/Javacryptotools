@@ -1,0 +1,6 @@
+# JitPack build configuration: https://jitpack.io/docs/BUILDING/
+# The library targets Java 8 (see javacryptotools/build.gradle), but the build and tests require JDK 17.
+jdk:
+  - openjdk17
+install:
+  - ./gradlew clean build publishToMavenLocal

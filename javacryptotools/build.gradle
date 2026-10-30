@@ -9,10 +9,23 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    // Publish the library to a Maven repository (used by JitPack)
+    id 'maven-publish'
 }
 
+// JitPack coordinates: com.github.Toporin:Javacryptotools:<tag>
+group = 'com.github.Toporin'
 // semantic versioning
 version='0.4.1'
+
+java {
+    withSourcesJar()
+}
+
+// Java 8 bytecode, for compatibility with Android and older desktop JVMs (tests use the build JDK)
+tasks.named('compileJava') {
+    options.release = 8
+}
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -68,5 +81,29 @@ tasks.register('integrationTest', Test) {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifactId = 'javacryptotools'
+            pom {
+                name = 'javacryptotools'
+                description = 'Java library for simple crypto coins integration: addresses, balances, tokens, NFTs and exchange rates'
+                url = 'https://github.com/Toporin/Javacryptotools'
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/Toporin/Javacryptotools'
+                    connection = 'scm:git:https://github.com/Toporin/Javacryptotools.git'
+                }
+            }
+        }
     }
 }
