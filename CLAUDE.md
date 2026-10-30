@@ -19,6 +19,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Force re-run when Gradle skips due to no changes
 ./gradlew test --rerun-tasks
+
+# Run network integration tests (tagged "network", excluded from ./gradlew test)
+./gradlew integrationTest
 ```
 
 The output JAR is produced at `javacryptotools/build/libs/javacryptotools-<version>.jar`.
@@ -51,7 +54,7 @@ apikeys.put("etherscan", "YOUR_KEY");
 Bitcoin coin = new Bitcoin(/*isTestnet=*/false, apikeys);
 ```
 
-Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream`; `Litecoin` attaches `Blockcypher` and `LitecoinSpace`; `Ethereum` and `Polygon` attach `Blockscout`; `Counterparty` attaches `Tokenscan`). Price explorers are `Coingate`, or `CoinCombined` for Counterparty.
+Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream`; `Litecoin` attaches `Blockcypher` and `LitecoinSpace`; `Ethereum` attaches `Blockscout`; `Polygon` attaches `Blockscout` with an `Etherscan` fallback (mainnet) or `Etherscan` (Amoy testnet); `Counterparty` attaches `Tokenscan`). Price explorers are `Coingate`, or `CoinCombined` for Counterparty.
 
 ### Adding a new coin
 
@@ -77,12 +80,13 @@ Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attach
 
 ## Tests
 
-Tests live in `src/test/java/javacryptotools/` and run offline (no network access):
+Tests live in `src/test/java/javacryptotools/`. All but `NetworkTest` run offline (no network access):
 
 - `CoinTest`: address generation (SegWit, legacy, CashAddr, EIP-55) and WIF encoding for every coin on mainnet and testnet. Test vectors are in `TestVectors`, derived from the BIP39 seed `tonight stem cause eyebrow estate smart duck wrong toe under job danger`.
 - `CoinPropertiesTest`: coin metadata, attached explorers, address web urls, testnet exchange rates.
 - `ExplorerFallbackTest`: `BaseCoin` explorer fallback logic, using fake explorers.
 - `AssetParsingTest`: Blockscout/Tokenscan token & NFT parsing, using recorded API responses in `src/test/resources/`.
 - `EncodingTest`: Base58, Bech32, CashAddress and SLIP44 constants.
+- `NetworkTest` (tag `network`, run with `./gradlew integrationTest`): live balances, token/NFT lists and exchange rates. API keys are read from `api_keys.ini` in the root project (template: `api_keys(sample).ini`, keep real keys out of git); tests needing a missing key are skipped.
 
 When adding a coin, add it to the case lists in `CoinTest` and `CoinPropertiesTest`.

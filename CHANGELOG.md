@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fix token contract & explorer links in Blockscout explorer (API now uses 'address_hash')
 * Fix string comparison in Blockcypher explorer
 * Rework test suite: offline tests for all coins (mainnet & testnet), explorer urls, explorer fallback, token/NFT parsing and encodings
+* Switch Polygon testnet from Mumbai to Amoy (breaking: symbol 'MUMBAI' is now 'POLTEST', display name 'Polygon Amoy Testnet'), using Etherscan explorer
+* Rewrite Etherscan explorer for API V2 (ETH, Sepolia, Polygon, Amoy), with token & NFT holdings computed from transfer history; requires API_KEY_ETHERSCAN
+* Add Etherscan as fallback explorer for Polygon mainnet (polygon.blockscout.com is behind a Cloudflare challenge)
+* Fix Blockscout explorer returning a zero balance / empty asset list when a request fails
+* Add network integration tests (./gradlew integrationTest) using API keys from api_keys.ini (template: api_keys(sample).ini)
 
 ## [0.4.0]:
 

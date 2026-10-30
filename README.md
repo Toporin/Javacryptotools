@@ -38,6 +38,13 @@ Explorer classes use API from the following services:
 These APIs are used to get info such as balances, NFT name, description and image preview.
 
 Remark: some explorer APIs require an API key to work correctly. API keys are provided through a hashmap<string:key, string:value>.
+See [api_keys(sample).ini](api_keys(sample).ini) for the list of supported keys, e.g.:
+
+```java
+HashMap<String, String> apikeys = new HashMap<>();
+apikeys.put("API_KEY_ETHERSCAN", "YOUR_ETHERSCAN_API_KEY"); // required for Polygon Amoy testnet
+Polygon coin = new Polygon(true, apikeys);
+```
 
 ## Build and Usage
 
@@ -49,6 +56,16 @@ and by adding the following line in the *dependencies* section of your *build.gr
 ```api files('libs/javacryptotools-0.2.0.jar')```
 
 In the future, the library will also be available on Maven central repository.
+
+## Tests
+
+```
+./gradlew test             # offline unit tests
+./gradlew integrationTest  # tests against third-party APIs (requires network access)
+```
+
+Integration tests read API keys from `api_keys.ini` in the project root (ignored by git):
+copy `api_keys(sample).ini` to `api_keys.ini` and fill in your keys. Tests requiring a missing key are skipped.
 
 ## License and attribution
 
