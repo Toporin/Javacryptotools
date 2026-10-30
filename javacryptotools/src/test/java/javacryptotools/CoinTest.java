@@ -79,7 +79,7 @@ class CoinTest {
                         PUBKEY_ETH, ADDRESS_ETH, null, null),
                 new Case("POL", () -> new Polygon(false, null),
                         PUBKEY_ETH, ADDRESS_ETH, null, null),
-                new Case("POL testnet", () -> new Polygon(true, null),
+                new Case("POLTEST", () -> new Polygon(true, null),
                         PUBKEY_ETH, ADDRESS_ETH, null, null)
         );
     }

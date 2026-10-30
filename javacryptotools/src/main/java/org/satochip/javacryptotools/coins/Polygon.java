@@ -29,8 +29,8 @@ public class Polygon extends Ethereum {
         wif_script_types.put("p2wsh-p2sh", 7);
 
         if (is_testnet){
-            coin_symbol = "MUMBAI";
-            display_name = "Polygon Testnet";
+            coin_symbol = "POLTEST";
+            display_name = "Polygon Amoy Testnet";
 
             magicbyte = 111;
             script_magicbyte = 196;
@@ -77,7 +77,12 @@ public class Polygon extends Ethereum {
 
         // reset explorers instantiated in parent class Ethereum!
         explorers = new ArrayList<>();
-        explorers.add(new Blockscout(this, apikeys, logLevel));
+        if (is_testnet){
+            // no Blockscout instance for Amoy testnet: use Etherscan (requires API_KEY_ETHERSCAN)
+            explorers.add(new Etherscan(this, apikeys, logLevel));
+        } else {
+            explorers.add(new Blockscout(this, apikeys, logLevel));
+        }
         priceExplorers = new ArrayList<>();
         priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }

@@ -2,8 +2,6 @@ package javacryptotools;
 
 import static javacryptotools.TestVectors.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +9,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,6 +25,7 @@ import org.satochip.javacryptotools.explorers.Blockscout;
 import org.satochip.javacryptotools.explorers.Blockstream;
 import org.satochip.javacryptotools.explorers.CoinCombined;
 import org.satochip.javacryptotools.explorers.Coingate;
+import org.satochip.javacryptotools.explorers.Etherscan;
 import org.satochip.javacryptotools.explorers.Fullstack;
 import org.satochip.javacryptotools.explorers.LitecoinSpace;
 import org.satochip.javacryptotools.explorers.Tokenscan;
@@ -124,6 +121,10 @@ class CoinPropertiesTest {
                         false, false, true, true,
                         classes(Blockscout.class), classes(Coingate.class),
                         ADDRESS_ETH[0], "https://polygon.blockscout.com/address/" + ADDRESS_ETH[0]),
+                new Case(() -> new Polygon(true, null), true, "POLTEST", "Polygon Amoy Testnet",
+                        false, false, true, true,
+                        classes(Etherscan.class), classes(Coingate.class),
+                        ADDRESS_ETH[0], "https://amoy.polygonscan.com/address/" + ADDRESS_ETH[0]),
                 new Case(() -> new UnsupportedCoin(false, null), false, "???", "Unsupported Coin",
                         false, false, false, false,
                         classes(), classes(),
@@ -173,19 +174,5 @@ class CoinPropertiesTest {
         assertEquals(0, coin.get_exchange_rate_with("USD"));
         assertEquals(0, coin.get_exchange_rate_with("EUR"));
         assertEquals(0, coin.priceExplorers.get(0).get_exchange_rate_with("USD"));
-    }
-
-    @Test
-    void polygonTestnet_isTestnet() {
-        Polygon coin = new Polygon(true, null);
-        assertTrue(coin.is_testnet);
-        assertEquals(0, coin.get_exchange_rate_with("USD"));
-    }
-
-    @Disabled("Polygon Mumbai testnet is deprecated and no keyless explorer is available for Amoy testnet")
-    @Test
-    void polygonTestnet_hasExplorer() {
-        Polygon coin = new Polygon(true, null);
-        assertFalse(coin.getAddressWeburl(ADDRESS_ETH[0]).contains("notfound.org"));
     }
 }

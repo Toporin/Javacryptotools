@@ -1,18 +1,58 @@
 package org.satochip.javacryptotools.explorers;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.satochip.javacryptotools.coins.Asset;
+import org.satochip.javacryptotools.coins.AssetType;
+import org.satochip.javacryptotools.coins.BaseCoin;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 
+// Etherscan API V2: a single API key for all supported EVM chains, selected with 'chainid'
+// Docs: https://docs.etherscan.io/introduction
+// Requires an API key in apikeys under 'API_KEY_ETHERSCAN'.
+//
+// The free API tier has no endpoint listing the token balances of an address, so token & NFT
+// holdings are computed from the token transfer history (at most 10000 transfers per asset type).
 
 public class Etherscan extends BaseExplorer implements Explorer{
-    
-    // headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
-    
+
+    public static final String APIKEY_NAME = "API_KEY_ETHERSCAN";
+    private static final String API_URL = "https://api.etherscan.io/v2/api";
+    private static final int MAX_RESULTS = 10000; // max page size supported by Etherscan
+
+    private static final Map<String, String> CHAIN_IDS;
+    private static final Map<String, String> WEB_URLS;
+    static {
+        Map<String, String> ids = new HashMap<>();
+        ids.put("ETH", "1");
+        ids.put("ETHTEST", "11155111"); // Sepolia
+        ids.put("POL", "137");
+        ids.put("POLTEST", "80002"); // Amoy
+        CHAIN_IDS = Collections.unmodifiableMap(ids);
+
+        Map<String, String> urls = new HashMap<>();
+        urls.put("ETH", "https://etherscan.io/");
+        urls.put("ETHTEST", "https://sepolia.etherscan.io/");
+        urls.put("POL", "https://polygonscan.com/");
+        urls.put("POLTEST", "https://amoy.polygonscan.com/");
+        WEB_URLS = Collections.unmodifiableMap(urls);
+    }
+
+    public Etherscan(BaseCoin coin, Map<String, String> apikeys){
+        this(coin, apikeys, Level.WARNING);
+    }
+    public Etherscan(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        super(coin, apikeys, logLevel);
+    }
     public Etherscan(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
     }
@@ -21,83 +61,217 @@ public class Etherscan extends BaseExplorer implements Explorer{
     }
 
     public String get_api_url(){
-        if (this.coin_symbol.equals("ETH")){
-            return "https://api.etherscan.io/api";
-        } else {
-            return "https://api-sepolia.etherscan.io/api";
-        }
+        return API_URL;
     }
-    
-    public String get_address_weburl(String addr){       
-        String web_url;
-        if (this.coin_symbol.equals("ETH")){
-            web_url= "https://etherscan.io/address/"+addr ;
-        } else {
-            web_url= "https://sepolia.etherscan.io/address/"+addr;
+
+    public String get_chain_id(){
+        String chainId = CHAIN_IDS.get(coin_symbol);
+        if (chainId == null){
+            throw new RuntimeException("Etherscan: unsupported coin " + coin_symbol);
         }
-        return web_url;
+        return chainId;
+    }
+
+    private String getWebURL(){
+        return WEB_URLS.getOrDefault(coin_symbol, "https://notfound.org/");
+    }
+
+    public String get_address_weburl(String addr){
+        return getWebURL() + "address/" + addr;
+    }
+
+    private String getTokenWebURL(String contract){
+        return getWebURL() + "token/" + contract;
+    }
+
+    private String getNFTWebURL(String contract, String tokenId){
+        return getWebURL() + "nft/" + contract + "/" + tokenId;
+    }
+
+    // send a request to the API (the api key is not logged)
+    private String request(String params){
+        String apikey = (apikeys != null) ? apikeys.get(APIKEY_NAME) : null;
+        if (apikey == null || apikey.isEmpty()){
+            throw new RuntimeException("Etherscan: missing API key " + APIKEY_NAME);
+        }
+        String url = get_api_url() + "?chainid=" + get_chain_id() + "&" + params;
+        logger.info("JAVACRYPTOTOOLS: Etherscan request url: " + url);
+
+        HttpsClient client= new HttpsClient(url + "&apikey=" + apikey);
+        String content= client.request();
+        if (content == null || content.isEmpty()){
+            throw new RuntimeException("Etherscan: empty response");
+        }
+        logger.info("JAVACRYPTOTOOLS: Etherscan request content: " + content);
+        return content;
     }
 
     public double get_balance(String addr) {
-        
-         /*
-            https://api.etherscan.io/api
-                ?module=account
-                &action=balance
-                &address=0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae
-                &tag=latest
-                &apikey=YourApiKeyToken
-                
-            {"status":"1","message":"OK","result":"353318436783144397866641"}
-                
-           */
         try{
-            // add to apikeys
-            String apikey= (String) apikeys.get("API_KEY_ETHERSCAN");
-            String base_url = get_api_url();
-            String url= base_url + "?module=account&action=balance&address=" + addr + "&tag=latest&apikey=" + apikey;
-            logger.info("JAVACRYPTOTOOLS: Etherscan get_balance  url: " + url);
-            
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            //Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            
-            //String user_agent= "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36";
-            // Header header = new BasicHeader(HttpHeaders.USER_AGENT, user_agent);
-            // List<Header> headers = Lists.newArrayList(header);
-            // HttpClient client = HttpClients.custom().setDefaultHeaders(headers).build();
-            // HttpUriRequest request = RequestBuilder.get().setUri(url).build();
-            // String content= client.execute(request);
-            // logger.info("JAVACRYPTOTOOLS: Request content: " + content);
-            
-            // String user_agent= "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36";
-            // OkHttpClient client = new OkHttpClient();
-            // Request request = new Request.Builder()
-                        // .header("User-Agent", user_agent)
-                        // .url(url)
-                        // .build();
-            // Response response = client.newCall(request).execute();
-            // String content = response.body().string();
-            logger.info("JAVACRYPTOTOOLS: Etherscan get_balance content: " + content);
-            
-            // parse json
-            JSONObject reader = new JSONObject(content);
-            int statusCode = reader.getInt("status");
-            if (statusCode!=1){
-                throw new RuntimeException("Etherscan: failed to fetch balance!");
-            }
-            long result = reader.getLong("result"); // in wei
-            double balance= (double) (result)/(Math.pow(10, 18));
-            logger.info("JAVACRYPTOTOOLS: Etherscan balance: " + balance);
-            return balance;
+            String content = request("module=account&action=balance&address=" + addr + "&tag=latest");
+            return parse_balance(content);
         } catch (Exception e){
             logger.warning("JAVACRYPTOTOOLS: Etherscan exception in balance: " + e);
             throw new RuntimeException("Etherscan: failed to fetch balance!");
         }
     }
 
-    public List<Asset> get_asset_list(String address){
-        return null;
+    public List<Asset> get_asset_list(String addr){
+        try{
+            String params = "module=account&address=" + addr + "&page=1&offset=" + MAX_RESULTS + "&sort=asc&action=";
+            List<Asset> assets = parse_token_transfers(request(params + "tokentx"), addr);
+            assets.addAll(parse_nft_transfers(request(params + "tokennfttx"), addr));
+            assets.addAll(parse_erc1155_transfers(request(params + "token1155tx"), addr));
+            return assets;
+        } catch (Exception e){
+            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in asset list: " + e);
+            throw new RuntimeException("Etherscan: failed to fetch asset list!");
+        }
     }
-        
+
+    /*
+     *   PARSING
+     */
+
+    public double parse_balance(String content){
+        JSONObject json = new JSONObject(content);
+        if (!"1".equals(json.optString("status"))){
+            throw new RuntimeException("Etherscan error: " + json.optString("message") + " " + json.opt("result"));
+        }
+        BigDecimal wei = new BigDecimal(json.getString("result"));
+        return wei.movePointLeft(18).doubleValue();
+    }
+
+    // returns the 'result' array, or an empty array if there is no transaction
+    private JSONArray parseResultArray(String content){
+        JSONObject json = new JSONObject(content);
+        String status = json.optString("status");
+        if ("1".equals(status)){
+            return json.getJSONArray("result");
+        }
+        if ("No transactions found".equals(json.optString("message"))){
+            return new JSONArray();
+        }
+        throw new RuntimeException("Etherscan error: " + json.optString("message") + " " + json.opt("result"));
+    }
+
+    // ERC-20: balance = sum of incoming transfers - sum of outgoing transfers
+    public List<Asset> parse_token_transfers(String content, String addr){
+        JSONArray txs = parseResultArray(content);
+        Map<String, JSONObject> infoByContract = new LinkedHashMap<>();
+        Map<String, BigInteger> balanceByContract = new HashMap<>();
+        for (int i = 0; i < txs.length(); i++){
+            JSONObject tx = txs.getJSONObject(i);
+            String contract = tx.getString("contractAddress");
+            BigInteger delta = transferDelta(tx, addr, new BigInteger(tx.optString("value", "0")));
+            infoByContract.putIfAbsent(contract, tx);
+            balanceByContract.merge(contract, delta, BigInteger::add);
+        }
+
+        List<Asset> assets = new ArrayList<>();
+        for (Map.Entry<String, JSONObject> entry : infoByContract.entrySet()){
+            String contract = entry.getKey();
+            BigInteger balance = balanceByContract.get(contract);
+            if (balance.signum() <= 0){
+                continue;
+            }
+            JSONObject info = entry.getValue();
+            Asset asset = new Asset();
+            asset.type = AssetType.Token;
+            asset.address = addr;
+            asset.contract = contract;
+            asset.name = info.optString("tokenName", "");
+            asset.symbol = info.optString("tokenSymbol", "");
+            asset.decimals = info.optString("tokenDecimal", "0");
+            asset.balance = toDecimalString(balance, asset.decimals);
+            asset.iconUrl = "";
+            asset.explorerLink = getTokenWebURL(contract);
+            assets.add(asset);
+        }
+        return assets;
+    }
+
+    // ERC-721: an nft is owned if its last transfer was to addr (transfers sorted in ascending order)
+    public List<Asset> parse_nft_transfers(String content, String addr){
+        JSONArray txs = parseResultArray(content);
+        Map<String, JSONObject> owned = new LinkedHashMap<>();
+        for (int i = 0; i < txs.length(); i++){
+            JSONObject tx = txs.getJSONObject(i);
+            String key = tx.getString("contractAddress") + "/" + tx.getString("tokenID");
+            if (tx.optString("from").equalsIgnoreCase(addr)){
+                owned.remove(key);
+            }
+            if (tx.optString("to").equalsIgnoreCase(addr)){
+                owned.put(key, tx);
+            }
+        }
+
+        List<Asset> assets = new ArrayList<>();
+        for (JSONObject tx : owned.values()){
+            assets.add(parseNft(tx, addr, "1"));
+        }
+        return assets;
+    }
+
+    // ERC-1155: balance per (contract, tokenId) = sum of incoming - sum of outgoing transfers
+    public List<Asset> parse_erc1155_transfers(String content, String addr){
+        JSONArray txs = parseResultArray(content);
+        Map<String, JSONObject> infoByKey = new LinkedHashMap<>();
+        Map<String, BigInteger> balanceByKey = new HashMap<>();
+        for (int i = 0; i < txs.length(); i++){
+            JSONObject tx = txs.getJSONObject(i);
+            String key = tx.getString("contractAddress") + "/" + tx.getString("tokenID");
+            BigInteger delta = transferDelta(tx, addr, new BigInteger(tx.optString("tokenValue", "0")));
+            infoByKey.putIfAbsent(key, tx);
+            balanceByKey.merge(key, delta, BigInteger::add);
+        }
+
+        List<Asset> assets = new ArrayList<>();
+        for (Map.Entry<String, JSONObject> entry : infoByKey.entrySet()){
+            BigInteger balance = balanceByKey.get(entry.getKey());
+            if (balance.signum() > 0){
+                assets.add(parseNft(entry.getValue(), addr, balance.toString()));
+            }
+        }
+        return assets;
+    }
+
+    private Asset parseNft(JSONObject tx, String addr, String balance){
+        String contract = tx.getString("contractAddress");
+        String tokenId = tx.getString("tokenID");
+        Asset asset = new Asset();
+        asset.type = AssetType.NFT;
+        asset.address = addr;
+        asset.contract = contract;
+        asset.name = tx.optString("tokenName", "");
+        asset.symbol = tx.optString("tokenSymbol", "");
+        asset.tokenid = tokenId;
+        asset.balance = balance;
+        asset.iconUrl = "";
+        asset.explorerLink = getTokenWebURL(contract);
+        asset.nftExplorerLink = getNFTWebURL(contract, tokenId);
+        return asset;
+    }
+
+    private static BigInteger transferDelta(JSONObject tx, String addr, BigInteger value){
+        BigInteger delta = BigInteger.ZERO;
+        if (tx.optString("to").equalsIgnoreCase(addr)){
+            delta = delta.add(value);
+        }
+        if (tx.optString("from").equalsIgnoreCase(addr)){
+            delta = delta.subtract(value);
+        }
+        return delta;
+    }
+
+    private static String toDecimalString(BigInteger value, String decimals){
+        int decimalsInt;
+        try {
+            decimalsInt = Integer.parseInt(decimals);
+        } catch (NumberFormatException e){
+            decimalsInt = 0;
+        }
+        return new BigDecimal(value).movePointLeft(decimalsInt).stripTrailingZeros().toPlainString();
+    }
+
 }

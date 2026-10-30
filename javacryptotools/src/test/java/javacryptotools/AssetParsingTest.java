@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -20,13 +22,16 @@ import org.satochip.javacryptotools.coins.Asset;
 import org.satochip.javacryptotools.coins.AssetType;
 import org.satochip.javacryptotools.coins.Counterparty;
 import org.satochip.javacryptotools.coins.Ethereum;
+import org.satochip.javacryptotools.coins.Polygon;
 import org.satochip.javacryptotools.explorers.Blockscout;
+import org.satochip.javacryptotools.explorers.Etherscan;
 import org.satochip.javacryptotools.explorers.Tokenscan;
 
 // Offline tests for token & NFT parsing, using recorded API responses from src/test/resources
 class AssetParsingTest {
 
     static final String ETH_OWNER = "0x00000000219ab540356cbb839cbe05303d7705fa";
+    static final String AMOY_OWNER = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"; // mixed case on purpose
     static final String XCP_OWNER = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R";
 
     static JSONObject loadFixture(String name) throws IOException {
@@ -34,6 +39,10 @@ class AssetParsingTest {
             assertNotNull(in, "missing fixture " + name);
             return new JSONObject(new String(in.readAllBytes(), StandardCharsets.UTF_8));
         }
+    }
+
+    static String loadFixtureString(String name) throws IOException {
+        return loadFixture(name).toString();
     }
 
     static List<Asset> parseBlockscout(String fixture) throws IOException {
@@ -174,5 +183,77 @@ class AssetParsingTest {
         assertEquals(AssetType.NFT, nft.type);
         assertEquals("https://example.com/pepe.png", nft.nftImageLink);
         assertFalse(nft.rateAvailable);
+    }
+
+    /*
+     *   ETHERSCAN (Polygon Amoy testnet)
+     */
+
+    static Etherscan amoyEtherscan() {
+        return new Etherscan(new Polygon(true, null), null);
+    }
+
+    @Test
+    void etherscan_balance() {
+        String content = "{\"status\":\"1\",\"message\":\"OK\",\"result\":\"592719867156692654977\"}";
+        assertEquals(592.719867156692654977, amoyEtherscan().parse_balance(content), 1e-9);
+    }
+
+    @Test
+    void etherscan_balanceError() {
+        String content = "{\"status\":\"0\",\"message\":\"NOTOK\",\"result\":\"Invalid API Key\"}";
+        assertThrows(RuntimeException.class, () -> amoyEtherscan().parse_balance(content));
+    }
+
+    @Test
+    void etherscan_erc20BalanceFromTransfers() throws IOException {
+        List<Asset> assets = amoyEtherscan().parse_token_transfers(loadFixtureString("etherscan_tokentx.json"), AMOY_OWNER);
+        assertEquals(1, assets.size()); // fully spent token is not listed
+        Asset usdc = assets.get(0);
+        assertEquals(AssetType.Token, usdc.type);
+        assertEquals("USDC", usdc.symbol);
+        assertEquals("0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582", usdc.contract);
+        assertEquals("6", usdc.decimals);
+        assertEquals("0.04", usdc.balance); // 20000 + 25000 - 5000 with 6 decimals
+        assertFalse(usdc.rateAvailable);
+        assertEquals("https://amoy.polygonscan.com/token/0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582", usdc.explorerLink);
+    }
+
+    @Test
+    void etherscan_erc721OwnershipFromTransfers() throws IOException {
+        List<Asset> assets = amoyEtherscan().parse_nft_transfers(loadFixtureString("etherscan_tokennfttx.json"), AMOY_OWNER);
+        assertEquals(1, assets.size()); // token #4 was sent away
+        Asset nft = assets.get(0);
+        assertEquals(AssetType.NFT, nft.type);
+        assertEquals("Web3Auth NFT", nft.name);
+        assertEquals("5", nft.tokenid);
+        assertEquals("1", nft.balance);
+        assertEquals("https://amoy.polygonscan.com/nft/0xd774b6e1880dc36a3e9787ea514cbfc275d2ba61/5", nft.nftExplorerLink);
+    }
+
+    @Test
+    void etherscan_erc1155BalanceFromTransfers() throws IOException {
+        List<Asset> assets = amoyEtherscan().parse_erc1155_transfers(loadFixtureString("etherscan_token1155tx.json"), AMOY_OWNER);
+        assertEquals(1, assets.size());
+        Asset nft = assets.get(0);
+        assertEquals(AssetType.NFT, nft.type);
+        assertEquals("1", nft.tokenid);
+        assertEquals("1", nft.balance); // 2 received - 1 sent
+    }
+
+    @Test
+    void etherscan_noTransactions() throws IOException {
+        String empty = loadFixtureString("etherscan_empty.json");
+        Etherscan explorer = amoyEtherscan();
+        assertTrue(explorer.parse_token_transfers(empty, AMOY_OWNER).isEmpty());
+        assertTrue(explorer.parse_nft_transfers(empty, AMOY_OWNER).isEmpty());
+        assertTrue(explorer.parse_erc1155_transfers(empty, AMOY_OWNER).isEmpty());
+    }
+
+    @Test
+    void etherscan_missingApiKeyFailsWithoutRequest() {
+        Polygon coin = new Polygon(true, new HashMap<>());
+        assertEquals(-1, coin.getBalance(AMOY_OWNER));
+        assertNull(coin.getAssetList(AMOY_OWNER));
     }
 }
