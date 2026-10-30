@@ -11,11 +11,13 @@ import java.util.logging.Level;
 
 public class Blockstream extends BaseExplorer implements Explorer{
 
-    public Blockstream(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Blockstream(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Blockstream(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public String get_url(){
@@ -33,29 +35,21 @@ public class Blockstream extends BaseExplorer implements Explorer{
     }
 
     public double get_balance(String addr){
-        try{
-            String base_url = get_url();
-            String url = base_url+ "/address/" + addr; //address_url % (base_url, addr)
-            logger.info("JAVACRYPTOTOOLS: Blockstream explorer  url: " + url);
-            
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Blockstream request content: " + content);
-            
-            // parse json
-            JSONObject reader = new JSONObject(content);
-            JSONObject chain_stats  = reader.getJSONObject("chain_stats");
-            long funded_txo_sum= chain_stats.getLong("funded_txo_sum");
-            // logger.info("JAVACRYPTOTOOLS: Blockstream funded_txo_sum: " + funded_txo_sum);
-            long spent_txo_sum= chain_stats.getLong("spent_txo_sum");
-            // logger.info("JAVACRYPTOTOOLS: Blockstream spent_txo_sum: " + spent_txo_sum);
-            double  balance= (double) (funded_txo_sum - spent_txo_sum)/(100000000);
-            // logger.info("JAVACRYPTOTOOLS: Blockstream balance: " + spent_txo_sum);
-            return balance;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Blockstream exception in balance: " + e);
-            throw new RuntimeException("Blockstream: failed to fetch balance!");
-        }   
+        String base_url = get_url();
+        String url = base_url+ "/address/" + addr; //address_url % (base_url, addr)
+        logFine("request: " + url);
+        
+        HttpsClient client= new HttpsClient(url);
+        String content= client.request();
+        logResponse(content);
+        
+        // parse json
+        JSONObject reader = new JSONObject(content);
+        JSONObject chain_stats  = reader.getJSONObject("chain_stats");
+        long funded_txo_sum= chain_stats.getLong("funded_txo_sum");
+        long spent_txo_sum= chain_stats.getLong("spent_txo_sum");
+        double  balance= (double) (funded_txo_sum - spent_txo_sum)/(100000000);
+        return balance;
     }
 
     public List<Asset> get_asset_list(String address){

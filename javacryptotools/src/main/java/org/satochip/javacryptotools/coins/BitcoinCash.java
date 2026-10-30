@@ -13,11 +13,14 @@ public class BitcoinCash extends BaseCoin {
     public static final byte cashAddressTypePubkey= 0; 
     public static final byte cashAddressTypeScript=1;
 
-    public BitcoinCash(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public BitcoinCash(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
-        super(logLevel);
+        this(is_testnet, apikeys);
+    }
+    public BitcoinCash(boolean is_testnet, Map<String, String> apikeys){
+        super();
+        this.is_testnet = is_testnet;
 
         segwit_supported = false;
         use_compressed_addr = true;
@@ -83,8 +86,8 @@ public class BitcoinCash extends BaseCoin {
     
         token_supported= false;
         nft_supported= false;
-        explorers.add(new Fullstack(this, apikeys, logLevel));
-        priceExplorers.add(new Coingate(this, apikeys, logLevel));
+        explorers.add(new Fulcrum(this, apikeys));
+        priceExplorers.add(new Coingate(this, apikeys));
     }
 
     public String pubToAddress(byte[] pubkey){

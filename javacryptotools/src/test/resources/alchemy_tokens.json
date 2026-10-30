@@ -1,0 +1,65 @@
+{
+  "data": {
+    "tokens": [
+      {
+        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        "network": "matic-amoy",
+        "tokenAddress": "0x0000000000000000000000000000000000001010",
+        "tokenBalance": "0x4eae443b368e80ac",
+        "tokenMetadata": {
+          "decimals": 18,
+          "logo": null,
+          "name": "Polygon Ecosystem Token",
+          "symbol": "POL"
+        },
+        "tokenPrices": []
+      },
+      {
+        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        "network": "matic-amoy",
+        "tokenAddress": "0x0c86a754a29714c4fe9c6f1359fa7099ed174c0b",
+        "tokenBalance": "0x00000000000000000000000000000000000000000000001ddc4d4693dc6b0000",
+        "tokenMetadata": {
+          "decimals": 18,
+          "logo": null,
+          "name": "Transak Test Token",
+          "symbol": "TRNSK"
+        },
+        "tokenPrices": []
+      },
+      {
+        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        "network": "matic-amoy",
+        "tokenAddress": "0x5555555555555555555555555555555555555555",
+        "tokenBalance": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "tokenMetadata": {
+          "decimals": 18,
+          "logo": null,
+          "name": "Transak Test Token",
+          "symbol": "TRNSK"
+        },
+        "tokenPrices": []
+      },
+      {
+        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        "network": "matic-amoy",
+        "tokenAddress": "0x6666666666666666666666666666666666666666",
+        "tokenBalance": "0x00000000000000000000000000000000000000000000000000000000004c4b40",
+        "tokenMetadata": {
+          "decimals": 6,
+          "logo": "https://static.alchemyapi.io/images/assets/3408.png",
+          "name": "USD Coin",
+          "symbol": "USDC"
+        },
+        "tokenPrices": [
+          {
+            "currency": "usd",
+            "value": "0.9998",
+            "lastUpdatedAt": "2026-10-30T10:00:00Z"
+          }
+        ]
+      }
+    ],
+    "pageKey": null
+  }
+}

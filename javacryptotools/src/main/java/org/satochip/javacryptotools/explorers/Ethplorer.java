@@ -22,8 +22,10 @@ public class Ethplorer extends BaseExplorer implements Explorer{
     public Ethplorer(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
     }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Ethplorer(String coin_symbol, Map<String, String> apikeys, Level level){
-        super(coin_symbol, apikeys, level);
+        this(coin_symbol, apikeys);
     }
 
     public String get_api_url(){
@@ -64,27 +66,19 @@ public class Ethplorer extends BaseExplorer implements Explorer{
             String base_url = get_api_url();
             String url= base_url
                     + "getAddressInfo/"
-                    + addr
-                    + "?apiKey="
-                    + apikey;
-            logger.info("JAVACRYPTOTOOLS: Ethplorer get_balance  url: " + url);
-            System.out.println("JAVACRYPTOTOOLS: Ethplorer get_balance  url: " + url);
+                    + addr;
+            logFine("request: " + url); // without api key
 
-            HttpsClient client= new HttpsClient(url);
+            HttpsClient client= new HttpsClient(url + "?apiKey=" + apikey);
             String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Ethplorer get_balance content: " + content);
-            System.out.println("JAVACRYPTOTOOLS: Ethplorer get_balance content: " + content);
+            logResponse(content);
 
             // parse json
             JSONObject reader = new JSONObject(content);
             Double balance = reader.getJSONObject("ETH").getDouble("balance");
-            logger.info("JAVACRYPTOTOOLS: Ethplorer balance: " + balance);
-            System.out.println("JAVACRYPTOTOOLS: Ethplorer balance: " + balance);
             return balance;
         } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Ethplorer exception in balance: " + e);
-            System.out.println("JAVACRYPTOTOOLS: Ethplorer exception in balance: " + e);
-            throw new RuntimeException("Ethplorer: failed to fetch balance!" + e);
+            throw new RuntimeException("failed to fetch balance: " + e, e);
         }
     }
     
@@ -97,15 +91,13 @@ public class Ethplorer extends BaseExplorer implements Explorer{
             String apikey= (String) apikeys.get("API_KEY_ETHPLORER");
             String urlString = this.get_api_url()
                 + "getAddressInfo/"
-                + address
-                + "?apiKey="
-                + apikey;
-            logger.info("JAVACRYPTOTOOLS: Ethplorer get_asset_list  url: " + urlString);
+                + address;
+            logFine("request: " + urlString); // without api key
 
             // send request
-            HttpsClient client= new HttpsClient(urlString);
+            HttpsClient client= new HttpsClient(urlString + "?apiKey=" + apikey);
             String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Ethplorer get_asset_list content: " + content);
+            logResponse(content);
 
             // parse json
             List<Asset> assetList = new ArrayList<Asset>();
@@ -120,17 +112,12 @@ public class Ethplorer extends BaseExplorer implements Explorer{
                 asset.address = address;
                 asset.type = AssetType.Token; // by default
                 asset.balance = token.getString("rawBalance");
-                System.out.println(asset.balance);
 
                 JSONObject tokenInfo = token.getJSONObject("tokenInfo");
                 asset.name = tokenInfo.getString("name");
                 asset.contract = tokenInfo.getString("address");
                 asset.symbol = tokenInfo.getString("symbol");
                 asset.decimals = tokenInfo.optString("decimals", "0");
-                System.out.println(asset.name);
-                System.out.println(asset.contract);
-                System.out.println(asset.symbol);
-                System.out.println(asset.decimals);
 
                 if (tokenInfo.has("price")){
                     JSONObject price = tokenInfo.optJSONObject("price");
@@ -138,10 +125,8 @@ public class Ethplorer extends BaseExplorer implements Explorer{
                         asset.rate = price.getDouble("rate");
                         asset.rateCurrency = price.getString("currency");
                         asset.rateAvailable = true;
-                        System.out.println(asset.rate + " "  + asset.rateCurrency);
                     } else {
                         asset.rateAvailable = false;
-                        System.out.println("No price rate available!");
                     }
                 }
 
@@ -151,9 +136,7 @@ public class Ethplorer extends BaseExplorer implements Explorer{
                 // TODO!
                  if (coin_symbol == "ETH"){
                      String tokenContract = asset.contract.toLowerCase();
-                     logger.info("JAVACRYPTOTOOLS: Ethplorer get_asset_list tokenContract1: " + tokenContract);
                      tokenContract = Ethereum.toChecksumAddress(tokenContract);
-                     logger.info("JAVACRYPTOTOOLS: Ethplorer get_asset_list tokenContract2: " + tokenContract);
                      asset.iconUrl = "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/" + tokenContract + "/logo.png";
                  } else if (coin_symbol == "BNB") {
                      String tokenContract = asset.contract.toLowerCase();
@@ -163,16 +146,13 @@ public class Ethplorer extends BaseExplorer implements Explorer{
 
                 // to get nft info, we use another method getNftList(addr: String, contract: String) from NftExplorer class
                 assetList.add(asset);
-                logger.info("JAVACRYPTOTOOLS: Ethplorer get_asset_list asset: " + asset);
 
             }
 
             return assetList;
 
         } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Ethplorer get_asset_list exception: " + e);
-            System.out.println("JAVACRYPTOTOOLS: Ethplorer get_asset_list exception: " + e);
-            throw new RuntimeException("Ethplorer: failed to fetch Ethereum token balance: " + e);
+            throw new RuntimeException("failed to fetch token balances: " + e, e);
         }
     }
 

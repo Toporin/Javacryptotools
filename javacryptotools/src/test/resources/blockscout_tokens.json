@@ -1,0 +1,64 @@
+{
+  "items": [
+    {
+      "token": {
+        "address_hash": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "circulating_market_cap": "180322440163.18448",
+        "circulating_supply": null,
+        "decimals": "6",
+        "exchange_rate": "0.998951",
+        "holders_count": "17005419",
+        "icon_url": "https://assets.coingecko.com/coins/images/325/small/Tether.png?1696501661",
+        "name": "Tether",
+        "reputation": "ok",
+        "symbol": "USDT",
+        "total_supply": "88301265725970534",
+        "type": "ERC-20",
+        "volume_24h": "96297781796.72125"
+      },
+      "token_id": null,
+      "token_instance": null,
+      "value": "4986362222"
+    },
+    {
+      "token": {
+        "address_hash": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "circulating_market_cap": "4595676681.938476",
+        "circulating_supply": null,
+        "decimals": "18",
+        "exchange_rate": "2224.01",
+        "holders_count": "3359788",
+        "icon_url": "https://assets.coingecko.com/coins/images/2518/small/weth.png?1696503332",
+        "name": "WETH",
+        "reputation": "ok",
+        "symbol": "WETH",
+        "total_supply": "2045356432052320898815406",
+        "type": "ERC-20",
+        "volume_24h": "2975838884.8763885"
+      },
+      "token_id": null,
+      "token_instance": null,
+      "value": "10006410000000000"
+    },
+    {
+      "token": {
+        "address_hash": "0x1111111111111111111111111111111111111111",
+        "decimals": null,
+        "exchange_rate": null,
+        "icon_url": null,
+        "name": "No Rate Token",
+        "symbol": "NRT",
+        "type": "ERC-20"
+      },
+      "token_id": null,
+      "token_instance": null,
+      "value": "42"
+    }
+  ],
+  "next_page_params": {
+    "id": 29712507098,
+    "value": "4000000000000000",
+    "fiat_value": "0.00020340800000000000",
+    "items_count": 50
+  }
+}

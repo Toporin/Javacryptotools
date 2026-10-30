@@ -8,11 +8,14 @@ import java.util.logging.Level;
 
 public class Counterparty extends BaseCoin {
 
-    public Counterparty(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Counterparty(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
-        super(logLevel);
+        this(is_testnet, apikeys);
+    }
+    public Counterparty(boolean is_testnet, Map<String, String> apikeys){
+        super();
+        this.is_testnet = is_testnet;
 
         segwit_supported = false; // currently, use legacy
         use_compressed_addr = true;
@@ -37,8 +40,8 @@ public class Counterparty extends BaseCoin {
     
         token_supported= true;
         nft_supported= true;
-        explorers.add(new Tokenscan(this, apikeys, logLevel));
-        priceExplorers.add(new CoinCombined(this, apikeys, logLevel));
+        explorers.add(new Tokenscan(this, apikeys));
+        priceExplorers.add(new CoinCombined(this, apikeys));
     }
 
 }

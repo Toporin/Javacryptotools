@@ -9,11 +9,14 @@ import java.util.logging.Level;
 
 public class UnsupportedCoin extends BaseCoin {
 
-    public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys, Level level){
-        super(level);
+        this(is_testnet, apikeys);
+    }
+    public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys){
+        super();
+        this.is_testnet = is_testnet;
 
         segwit_supported = false;
         use_compressed_addr = false;

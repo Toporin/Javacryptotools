@@ -36,11 +36,13 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
         nameToId = Collections.unmodifiableMap(map2);
     }
 
-    public Coingecko(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Coingecko(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Coingecko(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
     
     public String get_api_url(){
@@ -64,33 +66,32 @@ public class Coingecko extends BaseExplorer implements PriceExplorer{
     }
     
     public double get_exchange_rate_between(String coin, String other_coin){
-        logger.info("JAVACRYPTOTOOLS: Coingecko get_exchange_rate_between START");
         // TODO: coin must be listed in https://api.coingecko.com/api/v3//coins/list
         // TODO: other_coin must be listed in https://api.coingecko.com/api/v3/simple/supported_vs_currencies
         try{
             String id1 = Coingecko.symbolToId.get(coin);
             String id2 = Coingecko.nameToId.get(other_coin);
             if (id1 == null || id2 == null){
-                logger.warning("JAVACRYPTOTOOLS: Coingecko get_exchange_rate_between unsupported pair: " + id1 + " " + id2);
+                logWarning("unsupported pair: " + coin + "/" + other_coin);
                 return -1;
             }
 
             String base_url = get_api_url();
             String url= base_url + "simple/price?ids=" + id1 + "&vs_currencies=" + id2;
-            logger.info("JAVACRYPTOTOOLS: Coingecko explorer  url: " + url);
+            logFine("request: " + url);
             
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Coingecko request content: " + content);
+            logResponse(content);
             
             // parse json
             JSONObject priceInfo = new JSONObject(content);
             JSONObject coinInfo = priceInfo.getJSONObject(id1);
             double rate= coinInfo.getDouble(id2);
-            logger.info("JAVACRYPTOTOOLS: Coingecko request rate: " + rate);
             return rate;
         } catch (Exception e){
-           return (double)-1; 
+            logWarning("failed to get " + coin + "/" + other_coin + " rate: " + e);
+            return (double)-1;
         }
         
     }

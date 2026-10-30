@@ -2,7 +2,6 @@ package org.satochip.javacryptotools.explorers;
 
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,16 +16,15 @@ import org.satochip.javacryptotools.coins.Polygon;
 
 public class Covalent extends BaseExplorer implements Explorer {
 
-    // Logger
-    private static final Logger logger = Logger.getLogger(Covalent.class.getName());
-
     // Constructor
     public Covalent(String coinSymbol, Map<String, String> apiKeys) {
         super(coinSymbol, apiKeys);
     }
 
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Covalent(String coin_symbol, Map<String, String> apikeys, Level level) {
-        super(coin_symbol, apikeys, level);
+        this(coin_symbol, apikeys);
     }
 
     // Get Basic Auth Header
@@ -45,7 +43,7 @@ public class Covalent extends BaseExplorer implements Explorer {
             BigDecimal balanceDouble = balanceDecimal.divide(divisor);
             return balanceDouble.doubleValue();
         } catch (NumberFormatException e) {
-            logger.warning("Error: Balance is not a valid number.");
+            logWarning("invalid balance: " + balance);
             return null;
         }
     }
@@ -79,7 +77,7 @@ public class Covalent extends BaseExplorer implements Explorer {
                     + addr
                     + "/balances_native/";
 
-            logger.info("JAVACRYPTOTOOLS: Covalent get_balance  url: " + url);
+            logFine("request: " + url);
 
             String apikey = (String) apikeys.get("API_KEY_COVALENT");
 
@@ -99,9 +97,7 @@ public class Covalent extends BaseExplorer implements Explorer {
 
             return balanceResult;
         } catch (Exception e) {
-            logger.warning("JAVACRYPTOTOOLS: Covalent exception in balance: " + e);
-            System.out.println("JAVACRYPTOTOOLS: Covalent exception in balance: " + e);
-            throw new RuntimeException("Covalent: failed to fetch balance!" + e);
+            throw new RuntimeException("failed to fetch balance: " + e, e);
         }
     }
 
@@ -113,6 +109,7 @@ public class Covalent extends BaseExplorer implements Explorer {
                     + "/address/"
                     + addr
                     + "/balances_v2/";
+            logFine("request: " + url);
 
             String apikey = (String) apikeys.get("API_KEY_COVALENT");
 
@@ -147,7 +144,6 @@ public class Covalent extends BaseExplorer implements Explorer {
 
                 Asset asset = new Asset();
                 asset.type = AssetType.Token;
-                System.out.println(asset.balance);
 
                 asset.name = itemInfo.getString("contract_name");
                 asset.contract = itemInfo.getString("contract_address");
@@ -160,24 +156,17 @@ public class Covalent extends BaseExplorer implements Explorer {
                     asset.rateAvailable = true;
                 }
 
-                System.out.println(asset.name);
-                System.out.println(asset.contract);
-                System.out.println(asset.symbol);
-                System.out.println(asset.decimals);
 
                 asset.explorerLink = get_token_weburl(asset.contract);
                 asset.iconUrl = itemInfo.getJSONObject("logo_urls").getString("token_logo_url");
 
                 // to get nft info, we use another method getNftList(addr: String, contract: String) from NftExplorer class
                 assetList.add(asset);
-                logger.warning("JAVACRYPTOTOOLS: Covalent get_asset_list asset: " + asset);
             }
             return assetList;
 
         } catch (Exception e) {
-            logger.warning("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
-            System.out.println("JAVACRYPTOTOOLS: Covalent get_asset_list exception: " + e);
-            throw new RuntimeException("Covalent: failed to fetch Pol token balance: " + e);
+            throw new RuntimeException("failed to fetch token balances: " + e, e);
         }
     }
 }

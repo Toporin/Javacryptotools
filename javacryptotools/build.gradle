@@ -9,10 +9,23 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    // Publish the library to a Maven repository (used by JitPack)
+    id 'maven-publish'
 }
 
+// JitPack coordinates: com.github.Toporin:Javacryptotools:<tag>
+group = 'com.github.Toporin'
 // semantic versioning
-version='0.4.0'
+version='0.4.1'
+
+java {
+    withSourcesJar()
+}
+
+// Java 8 bytecode, for compatibility with Android and older desktop JVMs (tests use the build JDK)
+tasks.named('compileJava') {
+    options.release = 8
+}
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -24,9 +37,6 @@ dependencies {
     //testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
-
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     //implementation 'com.google.guava:guava:30.1-jre'
 	
@@ -35,12 +45,61 @@ dependencies {
     //api 'com.google.guava:guava:31.0.1-android'
     implementation 'com.google.guava:guava:28.1-android'
     api 'org.bouncycastle:bcprov-jdk15to18:1.69'
-    implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'org.json:json:20210307'
     //implementation 'com.squareup.okhttp3:okhttp:4.1.0'
 
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // tests requiring network access run with the integrationTest task
+        excludeTags 'network'
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+// Integration tests against third-party APIs (explorers & price APIs).
+// API keys are read from api_keys.ini in the root project (see api_keys(sample).ini).
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests that require network access to third-party APIs.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'network'
+    }
+    systemProperty 'apikeys.file', rootProject.file('api_keys.ini').absolutePath
+    // results depend on external services: never consider the task up-to-date
+    outputs.upToDateWhen { false }
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifactId = 'javacryptotools'
+            pom {
+                name = 'javacryptotools'
+                description = 'Java library for simple crypto coins integration: addresses, balances, tokens, NFTs and exchange rates'
+                url = 'https://github.com/Toporin/Javacryptotools'
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/Toporin/Javacryptotools'
+                    connection = 'scm:git:https://github.com/Toporin/Javacryptotools.git'
+                }
+            }
+        }
+    }
 }

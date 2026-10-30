@@ -15,11 +15,13 @@ import org.satochip.javacryptotools.coins.BaseCoin;
 
 public class Tokenscan extends BaseExplorer implements Explorer {
 
-    public Tokenscan(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Tokenscan(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Tokenscan(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     // Utilities
@@ -44,51 +46,41 @@ public class Tokenscan extends BaseExplorer implements Explorer {
 
     @Override
     public double get_balance(String addr) {
-        try {
-            String url = getURL() + "api/address/" + addr;
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
+        String url = getURL() + "api/address/" + addr;
+        logFine("request: " + url);
+        HttpsClient client= new HttpsClient(url);
+        String content= client.request();
+        logResponse(content);
 
-            JSONObject json = new JSONObject(content);
-
-            String balance = json.optString("xcp_balance", "0");
-            return Double.parseDouble(balance);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Tokenscan: failed to fetch balance!");
-        }
+        JSONObject json = new JSONObject(content);
+        String balance = json.optString("xcp_balance", "0");
+        return Double.parseDouble(balance);
     }
 
     @Override
     public List<Asset> get_asset_list(String addr) {
         List<Asset> assetList = new ArrayList<>();
 
-        try {
-            String url = getURL() + "api/balances/" + addr;
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
+        String url = getURL() + "api/balances/" + addr;
+        logFine("request: " + url);
+        HttpsClient client= new HttpsClient(url);
+        String content= client.request();
+        logResponse(content);
 
-            JSONObject json = new JSONObject(content);
-            JSONArray items = json.getJSONArray("data");
+        JSONObject json = new JSONObject(content);
+        JSONArray items = json.getJSONArray("data");
 
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = items.getJSONObject(i);
-                Asset asset = parseAssetFromJson(item, addr);
-                if (asset != null) {
-                    assetList.add(asset);
-                }
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject item = items.getJSONObject(i);
+            Asset asset = parseAssetFromJson(item, addr);
+            if (asset != null) {
+                assetList.add(asset);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Tokenscan: failed to fetch asset list!");
         }
-
         return assetList;
     }
 
-    private Asset parseAssetFromJson(JSONObject item, String addr) {
+    public Asset parseAssetFromJson(JSONObject item, String addr) {
         String name = item.optString("asset", "");
 
         // Skip XCP native coin
@@ -134,8 +126,10 @@ public class Tokenscan extends BaseExplorer implements Explorer {
                 asset.nftImageLink = description;
             } else if (description.endsWith(".json")) {
                 try {
+                    logFine("request: " + description);
                     HttpsClient client= new HttpsClient(description);
                     String content= client.request();
+                    logResponse(content);
 
                     JSONObject json = new JSONObject(content);
                     String imageLarge = json.optString("image_large", "");
@@ -149,7 +143,7 @@ public class Tokenscan extends BaseExplorer implements Explorer {
                     }
 
                 } catch (Exception e) {
-                    System.out.println("Error fetching NFT info from JSON: " + e.getMessage());
+                    logWarning("failed to fetch NFT info for " + name + " from " + description + ": " + e);
                 }
             } else {
                 asset.description = ((asset.description != null ? asset.description : "") + description);
