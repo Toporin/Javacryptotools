@@ -22,9 +22,9 @@ public class Blockcypher extends BaseExplorer implements Explorer{
     }
 
     public String get_base_url(){
-        if (this.coin_symbol == "LTC") {
+        if (this.coin_symbol.equals("LTC")) {
             return "https://api.blockcypher.com/v1/ltc/main/";
-        } else if (this.coin_symbol == "DOGE") {
+        } else if (this.coin_symbol.equals("DOGE")) {
             return "https://api.blockcypher.com/v1/doge/main/";
         } else {
             return "";
@@ -32,9 +32,9 @@ public class Blockcypher extends BaseExplorer implements Explorer{
     }
 
     public String get_address_weburl(String addr){
-        if (this.coin_symbol == "LTC") {
+        if (this.coin_symbol.equals("LTC")) {
             return "https://live.blockcypher.com/ltc/address/"+addr;
-        } else if (this.coin_symbol == "DOGE") {
+        } else if (this.coin_symbol.equals("DOGE")) {
             return "https://live.blockcypher.com/doge/address/"+addr;
         } else {
             return "https://live.blockcypher.com/";
