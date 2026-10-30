@@ -183,7 +183,7 @@ public class Blockscout extends BaseExplorer implements Explorer {
         return assetList;
     }
 
-    private Asset parseAssetFromJson(JSONObject item, String addr) {
+    public Asset parseAssetFromJson(JSONObject item, String addr) {
         JSONObject token = item.getJSONObject("token");
 
         if (token==null) {
@@ -195,7 +195,8 @@ public class Blockscout extends BaseExplorer implements Explorer {
         if (name!=null && !name.equals("null")){
             asset.name = name;
         }
-        String contract = token.optString("address");
+        // recent Blockscout API versions use 'address_hash' instead of 'address'
+        String contract = token.optString("address_hash", token.optString("address"));
         if (contract!=null && !contract.equals("null")){
             asset.contract = contract;
         }
@@ -203,8 +204,9 @@ public class Blockscout extends BaseExplorer implements Explorer {
         if (symbol!=null && !symbol.equals("null")){
             asset.symbol = symbol;
         }
-        asset.iconUrl = token.optString("icon_url", "");
-        asset.description = token.optString("description", "");
+        // warning: optString() returns "null" for JSON null values
+        asset.iconUrl = token.isNull("icon_url") ? "" : token.optString("icon_url");
+        asset.description = token.isNull("description") ? "" : token.optString("description");
 
         String type = token.optString("type", "");
         switch (type) {
