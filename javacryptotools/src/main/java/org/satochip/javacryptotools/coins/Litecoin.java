@@ -13,6 +13,7 @@ public class Litecoin extends BaseCoin {
     }
     public Litecoin(boolean is_testnet, Map<String, String> apikeys, Level level){
         super(level);
+        this.is_testnet = is_testnet;
 
         segwit_supported = true;
         use_compressed_addr = true;

@@ -13,6 +13,7 @@ public class Counterparty extends BaseCoin {
     }
     public Counterparty(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
+        this.is_testnet = is_testnet;
 
         segwit_supported = false; // currently, use legacy
         use_compressed_addr = true;

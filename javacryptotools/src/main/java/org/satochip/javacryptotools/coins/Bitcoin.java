@@ -14,6 +14,7 @@ public class Bitcoin extends BaseCoin {
     }
     public Bitcoin(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
+        this.is_testnet = is_testnet;
 
         segwit_supported = true;
         use_compressed_addr = true;

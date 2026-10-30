@@ -18,6 +18,7 @@ public class BitcoinCash extends BaseCoin {
     }
     public BitcoinCash(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
         super(logLevel);
+        this.is_testnet = is_testnet;
 
         segwit_supported = false;
         use_compressed_addr = true;

@@ -14,6 +14,7 @@ public class UnsupportedCoin extends BaseCoin {
     }
     public UnsupportedCoin(boolean is_testnet, Map<String, String> apikeys, Level level){
         super(level);
+        this.is_testnet = is_testnet;
 
         segwit_supported = false;
         use_compressed_addr = false;

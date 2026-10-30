@@ -253,6 +253,10 @@ public abstract class BaseCoin {
      *   PRICE EXPLORER METHODS
      */
     public double get_exchange_rate_with(String other_coin){
+        // testnet coins have no market value
+        if (is_testnet){
+            return 0;
+        }
         return get_exchange_rate_between(this.coin_symbol, other_coin);
     }
 
