@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -316,7 +317,10 @@ public class Blockscout extends BaseExplorer implements Explorer {
         StringBuilder queryString = new StringBuilder();
         boolean first = true;
 
-        for (String key : params.keySet()) {
+        // use keys() instead of keySet(), which is missing from the org.json version built into Android
+        Iterator<String> keys = params.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
             String value = params.optString(key, "");
 
             if (first && withHeader) {
