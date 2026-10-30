@@ -76,7 +76,11 @@ public class Litecoin extends BaseCoin {
         
         token_supported= false;
         nft_supported= false;
-        explorers.add(new Blockcypher(this, apikeys, logLevel));
+        if (!is_testnet){
+            // Blockcypher does not support Litecoin testnet
+            explorers.add(new Blockcypher(this, apikeys, logLevel));
+        }
+        explorers.add(new LitecoinSpace(this, apikeys, logLevel));
         priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }
 
