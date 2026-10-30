@@ -23,6 +23,7 @@ import org.satochip.javacryptotools.coins.AssetType;
 import org.satochip.javacryptotools.coins.Counterparty;
 import org.satochip.javacryptotools.coins.Ethereum;
 import org.satochip.javacryptotools.coins.Polygon;
+import org.satochip.javacryptotools.explorers.Alchemy;
 import org.satochip.javacryptotools.explorers.Blockscout;
 import org.satochip.javacryptotools.explorers.Etherscan;
 import org.satochip.javacryptotools.explorers.Tokenscan;
@@ -250,10 +251,82 @@ class AssetParsingTest {
         assertTrue(explorer.parse_erc1155_transfers(empty, AMOY_OWNER).isEmpty());
     }
 
+    /*
+     *   ALCHEMY (Polygon)
+     */
+
+    static Alchemy amoyAlchemy() {
+        return new Alchemy(new Polygon(true, null), null);
+    }
+
     @Test
-    void etherscan_missingApiKeyFailsWithoutRequest() {
-        Polygon coin = new Polygon(true, new HashMap<>());
-        assertEquals(-1, coin.getBalance(AMOY_OWNER));
-        assertNull(coin.getAssetList(AMOY_OWNER));
+    void alchemy_balance() {
+        String content = "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"0x2021a3fad08762db81\"}";
+        assertEquals(592.719867156692654977, amoyAlchemy().parse_balance(content), 1e-9);
+    }
+
+    @Test
+    void alchemy_balanceError() {
+        String content = "{\"jsonrpc\":\"2.0\",\"id\":1,\"error\":{\"code\":-32602,\"message\":\"invalid address\"}}";
+        assertThrows(RuntimeException.class, () -> amoyAlchemy().parse_balance(content));
+    }
+
+    @Test
+    void alchemy_tokens() throws IOException {
+        List<Asset> assets = amoyAlchemy().parse_token_list(loadFixture("alchemy_tokens.json"), AMOY_OWNER);
+        assertEquals(2, assets.size()); // native POL & zero balance are skipped
+
+        Asset trnsk = assets.get(0);
+        assertEquals(AssetType.Token, trnsk.type);
+        assertEquals("Transak Test Token", trnsk.name);
+        assertEquals("TRNSK", trnsk.symbol);
+        assertEquals("0x0c86a754a29714c4fe9c6f1359fa7099ed174c0b", trnsk.contract);
+        assertEquals("18", trnsk.decimals);
+        assertEquals("550.83", trnsk.balance);
+        assertEquals("", trnsk.iconUrl); // null logo
+        assertFalse(trnsk.rateAvailable);
+        assertEquals("https://amoy.polygonscan.com/token/0x0c86a754a29714c4fe9c6f1359fa7099ed174c0b", trnsk.explorerLink);
+
+        Asset usdc = assets.get(1);
+        assertEquals("5", usdc.balance);
+        assertEquals("https://static.alchemyapi.io/images/assets/3408.png", usdc.iconUrl);
+        assertTrue(usdc.rateAvailable);
+        assertEquals(0.9998, usdc.rate);
+        assertEquals("USD", usdc.rateCurrency);
+    }
+
+    @Test
+    void alchemy_nfts() throws IOException {
+        List<Asset> assets = amoyAlchemy().parse_nft_list(loadFixture("alchemy_nfts.json"), AMOY_OWNER);
+        assertEquals(2, assets.size()); // spam nft is skipped
+
+        Asset erc721 = assets.get(0);
+        assertEquals(AssetType.NFT, erc721.type);
+        assertEquals("Cutrix", erc721.name);
+        assertEquals("CTRX", erc721.symbol);
+        assertEquals("0x7BdC868c73Af350b2e6B14CEaDC074a2909ec4E2", erc721.contract);
+        assertEquals("1238012972454248237435767387143779415173800484933", erc721.tokenid);
+        assertEquals("1", erc721.balance);
+        assertEquals("A moderately handsome wallet address", erc721.nftDescription);
+        assertTrue(erc721.nftImageLink.startsWith("https://"));
+        assertTrue(erc721.nftImageSmallLink.startsWith("https://"));
+        assertEquals("https://amoy.polygonscan.com/nft/0x7BdC868c73Af350b2e6B14CEaDC074a2909ec4E2/"
+                + "1238012972454248237435767387143779415173800484933", erc721.nftExplorerLink);
+
+        Asset erc1155 = assets.get(1);
+        assertEquals("1", erc1155.tokenid);
+        assertEquals("2", erc1155.balance);
+        assertNull(erc1155.name);
+        assertNull(erc1155.nftName);
+        assertNull(erc1155.nftImageLink);
+    }
+
+    @Test
+    void polygon_missingApiKeyFailsWithoutRequest() {
+        for (boolean isTestnet : new boolean[]{false, true}) {
+            Polygon coin = new Polygon(isTestnet, new HashMap<>());
+            assertEquals(-1, coin.getBalance(AMOY_OWNER));
+            assertNull(coin.getAssetList(AMOY_OWNER));
+        }
     }
 }

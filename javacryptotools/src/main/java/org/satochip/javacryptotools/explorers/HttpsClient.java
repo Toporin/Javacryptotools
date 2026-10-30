@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +69,34 @@ public class HttpsClient{
     }
     
     
+    // send a POST request with a json body
+    public String post(String json_body){
+
+        String content=null;
+        try {
+             URL url = new URL(this.https_url);
+             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+             con.setRequestMethod("POST");
+             con.setRequestProperty("Content-Type", "application/json");
+             if(headers!=null){
+                 for (Map.Entry<String, String> entry : headers.entrySet()) {
+                     con.setRequestProperty(entry.getKey(), entry.getValue());
+                 }
+             }
+             con.setDoOutput(true);
+             try (OutputStream os = con.getOutputStream()) {
+                 os.write(json_body.getBytes(StandardCharsets.UTF_8));
+             }
+
+             content= print_content(con);
+             responseCode= con.getResponseCode();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
    // private void testIt(){
 
       // String https_url = "https://www.google.com/";

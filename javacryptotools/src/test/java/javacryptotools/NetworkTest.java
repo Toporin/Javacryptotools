@@ -28,7 +28,7 @@ import org.satochip.javacryptotools.coins.Counterparty;
 import org.satochip.javacryptotools.coins.Ethereum;
 import org.satochip.javacryptotools.coins.Litecoin;
 import org.satochip.javacryptotools.coins.Polygon;
-import org.satochip.javacryptotools.explorers.Etherscan;
+import org.satochip.javacryptotools.explorers.Alchemy;
 
 // Integration tests against third-party APIs: run with ./gradlew integrationTest
 // Results depend on external services and on-chain state, so assertions are kept loose:
@@ -97,9 +97,8 @@ class NetworkTest {
                 new Case("XCPTEST", keys -> new Counterparty(true, keys), XCPTEST_ADDRESS, false, null),
                 new Case("ETH", keys -> new Ethereum(false, keys), ETH_DEPOSIT_CONTRACT, true, null),
                 new Case("ETHTEST", keys -> new Ethereum(true, keys), VITALIK, false, null),
-                // polygon.blockscout.com is behind a Cloudflare challenge: currently works with the Etherscan fallback only
-                new Case("POL", keys -> new Polygon(false, keys), VITALIK, false, Etherscan.APIKEY_NAME),
-                new Case("POLTEST", keys -> new Polygon(true, keys), VITALIK, false, Etherscan.APIKEY_NAME)
+                new Case("POL", keys -> new Polygon(false, keys), VITALIK, false, Alchemy.APIKEY_NAME),
+                new Case("POLTEST", keys -> new Polygon(true, keys), VITALIK, false, Alchemy.APIKEY_NAME)
         );
     }
 
@@ -135,9 +134,8 @@ class NetworkTest {
     static Stream<Case> assetCases() {
         return Stream.of(
                 new Case("ETH", keys -> new Ethereum(false, keys), ETH_DEPOSIT_CONTRACT, true, null),
-                // polygon.blockscout.com is behind a Cloudflare challenge: currently works with the Etherscan fallback only
-                new Case("POL", keys -> new Polygon(false, keys), VITALIK, true, Etherscan.APIKEY_NAME),
-                new Case("POLTEST", keys -> new Polygon(true, keys), VITALIK, true, Etherscan.APIKEY_NAME),
+                new Case("POL", keys -> new Polygon(false, keys), VITALIK, true, Alchemy.APIKEY_NAME),
+                new Case("POLTEST", keys -> new Polygon(true, keys), VITALIK, true, Alchemy.APIKEY_NAME),
                 // only holds XCP, which is not listed as an asset: checks that the request succeeds
                 new Case("XCPTEST", keys -> new Counterparty(true, keys), XCPTEST_ADDRESS, false, null)
         );

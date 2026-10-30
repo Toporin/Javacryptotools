@@ -77,14 +77,7 @@ public class Polygon extends Ethereum {
 
         // reset explorers instantiated in parent class Ethereum!
         explorers = new ArrayList<>();
-        if (is_testnet){
-            // no Blockscout instance for Amoy testnet: use Etherscan (requires API_KEY_ETHERSCAN)
-            explorers.add(new Etherscan(this, apikeys, logLevel));
-        } else {
-            explorers.add(new Blockscout(this, apikeys, logLevel));
-            // fallback (requires API_KEY_ETHERSCAN)
-            explorers.add(new Etherscan(this, apikeys, logLevel));
-        }
+        explorers.add(new Alchemy(this, apikeys, logLevel)); // requires API_KEY_ALCHEMY
         priceExplorers = new ArrayList<>();
         priceExplorers.add(new Coingate(this, apikeys, logLevel));
     }

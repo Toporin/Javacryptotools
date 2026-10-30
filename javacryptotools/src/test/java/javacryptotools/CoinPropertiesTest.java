@@ -20,12 +20,12 @@ import org.satochip.javacryptotools.coins.Ethereum;
 import org.satochip.javacryptotools.coins.Litecoin;
 import org.satochip.javacryptotools.coins.Polygon;
 import org.satochip.javacryptotools.coins.UnsupportedCoin;
+import org.satochip.javacryptotools.explorers.Alchemy;
 import org.satochip.javacryptotools.explorers.Blockcypher;
 import org.satochip.javacryptotools.explorers.Blockscout;
 import org.satochip.javacryptotools.explorers.Blockstream;
 import org.satochip.javacryptotools.explorers.CoinCombined;
 import org.satochip.javacryptotools.explorers.Coingate;
-import org.satochip.javacryptotools.explorers.Etherscan;
 import org.satochip.javacryptotools.explorers.Fullstack;
 import org.satochip.javacryptotools.explorers.LitecoinSpace;
 import org.satochip.javacryptotools.explorers.Tokenscan;
@@ -119,11 +119,11 @@ class CoinPropertiesTest {
                         ADDRESS_ETH[0], "https://eth-sepolia.blockscout.com/address/" + ADDRESS_ETH[0]),
                 new Case(() -> new Polygon(false, null), false, "POL", "Polygon",
                         false, false, true, true,
-                        classes(Blockscout.class, Etherscan.class), classes(Coingate.class),
-                        ADDRESS_ETH[0], "https://polygon.blockscout.com/address/" + ADDRESS_ETH[0]),
+                        classes(Alchemy.class), classes(Coingate.class),
+                        ADDRESS_ETH[0], "https://polygonscan.com/address/" + ADDRESS_ETH[0]),
                 new Case(() -> new Polygon(true, null), true, "POLTEST", "Polygon Amoy Testnet",
                         false, false, true, true,
-                        classes(Etherscan.class), classes(Coingate.class),
+                        classes(Alchemy.class), classes(Coingate.class),
                         ADDRESS_ETH[0], "https://amoy.polygonscan.com/address/" + ADDRESS_ETH[0]),
                 new Case(() -> new UnsupportedCoin(false, null), false, "???", "Unsupported Coin",
                         false, false, false, false,
