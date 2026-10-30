@@ -25,8 +25,19 @@ import java.io.ByteArrayOutputStream;
 
 public abstract class BaseCoin {
     
-    public static final Logger logger = Logger.getLogger("org.satochip.javacryptotools");
+    /*
+     * Logging: all library classes log to the 'org.satochip.javacryptotools' logger (java.util.logging).
+     * The library never sets the logger level: the calling application configures it, or a parent
+     * logger such as 'org.satochip'. Levels used:
+     * - WARNING: errors, including third-party API failures (logged where the error is handled)
+     * - FINE: debug info (requests, responses, results)
+     * API keys are never logged.
+     */
+    public static final String LOGGER_NAME = "org.satochip.javacryptotools";
+    public static final Logger logger = Logger.getLogger(LOGGER_NAME);
 
+    /** @deprecated not used: the library does not set the logger level. */
+    @Deprecated
     public Level logLevel;
     public String coin_symbol;
     public String display_name;
@@ -50,16 +61,21 @@ public abstract class BaseCoin {
     public Map<String, Integer> xpub_headers;
 
     public BaseCoin(){
-        logLevel = Level.WARNING;
-        logger.setLevel(logLevel);
     }
+    /** @deprecated the level is ignored: configure the logger from the application (see LOGGER_NAME). */
+    @Deprecated
     public BaseCoin(Level level){
         logLevel = level;
-        logger.setLevel(logLevel);
     }
 
+    // Sets the level of the library logger, shared by all coins and explorers.
+    // Optional: the level can also be set from the application on the logger, or on a parent logger.
     public void setLoggerLevel(String level){
         switch(level){
+            case "fine":
+            case "debug":
+                logger.setLevel(Level.FINE);
+                break;
             case "info":
                 logger.setLevel(Level.INFO);
                 break;
@@ -219,9 +235,11 @@ public abstract class BaseCoin {
     public double getBalance(String addr){
         for (Explorer explorer : explorers){
             try{
-                return explorer.get_balance(addr);
+                double balance = explorer.get_balance(addr);
+                logFine("balance from " + name(explorer) + " for " + addr + ": " + balance);
+                return balance;
             } catch (Exception e) {
-                logger.info("JAVACRYPTOTOOLS: failed to get balance from " + explorer + " with error: " + e);
+                logWarning(name(explorer) + " failed to get balance: " + e);
             }
         }
         return -1;
@@ -230,9 +248,12 @@ public abstract class BaseCoin {
     public List<Asset> getAssetList(String addr){
         for (Explorer explorer : explorers){
             try{
-                return explorer.get_asset_list(addr);
+                List<Asset> assets = explorer.get_asset_list(addr);
+                logFine("assets from " + name(explorer) + " for " + addr + ": "
+                        + (assets != null ? assets.size() : "null"));
+                return assets;
             } catch (Exception e) {
-                logger.info("JAVACRYPTOTOOLS: failed to get assets from " + explorer + " with error: " + e);
+                logWarning(name(explorer) + " failed to get assets: " + e);
             }
         }
         return null;
@@ -243,7 +264,7 @@ public abstract class BaseCoin {
             try{
                 return explorer.get_address_weburl(addr);
             } catch (Exception e) {
-                logger.info("JAVACRYPTOTOOLS: failed to get explorer url from " + explorer + " with error: " + e);
+                logWarning(name(explorer) + " failed to get address web url: " + e);
             }
         }
         return "";
@@ -265,13 +286,33 @@ public abstract class BaseCoin {
             try{
                 double rate = explorer.get_exchange_rate_between(coin, other_coin);
                 if (rate >= 0) {
+                    logFine(coin + "/" + other_coin + " rate from " + name(explorer) + ": " + rate);
                     return rate;
                 }
+                // price explorers log their own errors before returning -1
             } catch (Exception e) {
-                logger.info("JAVACRYPTOTOOLS: failed to get rate from " + explorer + " with error: " + e);
+                logWarning(name(explorer) + " failed to get " + coin + "/" + other_coin + " rate: " + e);
             }
         }
         return -1;
+    }
+
+    private static String name(Object explorer){
+        return explorer.getClass().getSimpleName();
+    }
+
+    /*
+     *   LOGGING HELPERS: messages are prefixed with the coin class name and symbol (same format as explorers)
+     */
+
+    protected void logFine(String msg){
+        if (logger.isLoggable(Level.FINE)){
+            logger.fine(getClass().getSimpleName() + " (" + coin_symbol + "): " + msg);
+        }
+    }
+
+    protected void logWarning(String msg){
+        logger.warning(getClass().getSimpleName() + " (" + coin_symbol + "): " + msg);
     }
 
 }

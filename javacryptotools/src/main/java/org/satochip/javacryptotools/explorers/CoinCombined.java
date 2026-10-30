@@ -14,14 +14,16 @@ public class CoinCombined extends BaseExplorer implements PriceExplorer{
     private final PriceExplorer coingate;
     private final PriceExplorer coingecko;
 
-    public CoinCombined(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
+    public CoinCombined(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
+        this(coin, apikeys);
     }
 
-    public CoinCombined(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
-        coingate = new Coingate(coin, apikeys, logLevel);
-        coingecko = new Coingecko(coin, apikeys, logLevel);
+    public CoinCombined(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
+        coingate = new Coingate(coin, apikeys);
+        coingecko = new Coingecko(coin, apikeys);
     }
 
     public String get_api_url(){
@@ -44,7 +46,6 @@ public class CoinCombined extends BaseExplorer implements PriceExplorer{
     }
 
     public double get_exchange_rate_between(String coin, String other_coin){
-        logger.info("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between START");
         //https://coingate.com/currencies
         try{
             if (coin.equals("XCP")){
@@ -54,7 +55,7 @@ public class CoinCombined extends BaseExplorer implements PriceExplorer{
             }
 
         } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between exception: " + e);
+            logWarning("failed to get " + coin + "/" + other_coin + " rate: " + e);
             return -1;
         }
     }

@@ -9,11 +9,13 @@ import java.util.Map;
 
 public class Polygon extends Ethereum {
 
-    public Polygon(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Polygon(boolean is_testnet, Map<String, String> apikeys, Level level){
-        super(is_testnet, apikeys, level);
+        this(is_testnet, apikeys);
+    }
+    public Polygon(boolean is_testnet, Map<String, String> apikeys){
+        super(is_testnet, apikeys);
 
         segwit_supported = false;
         use_compressed_addr = false;
@@ -77,8 +79,8 @@ public class Polygon extends Ethereum {
 
         // reset explorers instantiated in parent class Ethereum!
         explorers = new ArrayList<>();
-        explorers.add(new Alchemy(this, apikeys, logLevel)); // requires API_KEY_ALCHEMY
+        explorers.add(new Alchemy(this, apikeys)); // requires API_KEY_ALCHEMY
         priceExplorers = new ArrayList<>();
-        priceExplorers.add(new Coingate(this, apikeys, logLevel));
+        priceExplorers.add(new Coingate(this, apikeys));
     }
 }

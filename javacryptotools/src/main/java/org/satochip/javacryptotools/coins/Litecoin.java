@@ -8,11 +8,13 @@ import java.util.logging.Level;
 
 public class Litecoin extends BaseCoin {
 
-    public Litecoin(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Litecoin(boolean is_testnet, Map<String, String> apikeys, Level level){
-        super(level);
+        this(is_testnet, apikeys);
+    }
+    public Litecoin(boolean is_testnet, Map<String, String> apikeys){
+        super();
         this.is_testnet = is_testnet;
 
         segwit_supported = true;
@@ -78,10 +80,10 @@ public class Litecoin extends BaseCoin {
         nft_supported= false;
         if (!is_testnet){
             // Blockcypher does not support Litecoin testnet
-            explorers.add(new Blockcypher(this, apikeys, logLevel));
+            explorers.add(new Blockcypher(this, apikeys));
         }
-        explorers.add(new LitecoinSpace(this, apikeys, logLevel));
-        priceExplorers.add(new Coingate(this, apikeys, logLevel));
+        explorers.add(new LitecoinSpace(this, apikeys));
+        priceExplorers.add(new Coingate(this, apikeys));
     }
 
 }

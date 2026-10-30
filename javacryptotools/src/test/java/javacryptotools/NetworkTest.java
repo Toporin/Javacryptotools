@@ -172,4 +172,35 @@ class NetworkTest {
             assertTrue(rate > 0, coin.coin_symbol + "/" + fiat + " rate request failed (got " + rate + ")");
         }
     }
+
+    /*
+     *   LOGGING
+     */
+
+    @org.junit.jupiter.api.Test
+    void apiKeysAreNeverLogged() {
+        assumeTrue(ApiKeys.has(apikeys, Alchemy.APIKEY_NAME), "missing " + Alchemy.APIKEY_NAME + " in api_keys.ini");
+        String apikey = apikeys.get(Alchemy.APIKEY_NAME);
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BaseCoin.LOGGER_NAME);
+        LoggingTest.CapturingHandler handler = new LoggingTest.CapturingHandler();
+        java.util.logging.Level savedLevel = logger.getLevel();
+        logger.setLevel(java.util.logging.Level.FINEST);
+        logger.addHandler(handler);
+        try {
+            BaseCoin coin = new Polygon(true, apikeys);
+            coin.getBalance(VITALIK);
+            coin.getAssetList(VITALIK);
+            // failing request with the key in the url
+            new Polygon(true, apikeys).explorers.get(0).get_address_weburl(VITALIK);
+            new org.satochip.javacryptotools.explorers.HttpsClient(
+                    "https://polygon-amoy.g.alchemy.com/v2/" + apikey + "/notfound").request();
+        } finally {
+            logger.removeHandler(handler);
+            logger.setLevel(savedLevel);
+        }
+        assertFalse(handler.records.isEmpty(), "expected debug logs");
+        for (java.util.logging.LogRecord record : handler.records) {
+            assertFalse(record.getMessage().contains(apikey), "API key logged: " + record.getMessage());
+        }
+    }
 }

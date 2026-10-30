@@ -47,17 +47,21 @@ public class Etherscan extends BaseExplorer implements Explorer{
         WEB_URLS = Collections.unmodifiableMap(urls);
     }
 
-    public Etherscan(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Etherscan(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Etherscan(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
     public Etherscan(String coin_symbol, Map<String, String> apikeys){
         super(coin_symbol, apikeys);
     }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Etherscan(String coin_symbol, Map<String, String> apikeys, Level level){
-        super(coin_symbol, apikeys, level);
+        this(coin_symbol, apikeys);
     }
 
     public String get_api_url(){
@@ -95,38 +99,28 @@ public class Etherscan extends BaseExplorer implements Explorer{
             throw new RuntimeException("Etherscan: missing API key " + APIKEY_NAME);
         }
         String url = get_api_url() + "?chainid=" + get_chain_id() + "&" + params;
-        logger.info("JAVACRYPTOTOOLS: Etherscan request url: " + url);
+        logFine("request: " + url);
 
         HttpsClient client= new HttpsClient(url + "&apikey=" + apikey);
         String content= client.request();
         if (content == null || content.isEmpty()){
             throw new RuntimeException("Etherscan: empty response");
         }
-        logger.info("JAVACRYPTOTOOLS: Etherscan request content: " + content);
+        logResponse(content);
         return content;
     }
 
     public double get_balance(String addr) {
-        try{
-            String content = request("module=account&action=balance&address=" + addr + "&tag=latest");
-            return parse_balance(content);
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in balance: " + e);
-            throw new RuntimeException("Etherscan: failed to fetch balance!");
-        }
+        String content = request("module=account&action=balance&address=" + addr + "&tag=latest");
+        return parse_balance(content);
     }
 
     public List<Asset> get_asset_list(String addr){
-        try{
-            String params = "module=account&address=" + addr + "&page=1&offset=" + MAX_RESULTS + "&sort=asc&action=";
-            List<Asset> assets = parse_token_transfers(request(params + "tokentx"), addr);
-            assets.addAll(parse_nft_transfers(request(params + "tokennfttx"), addr));
-            assets.addAll(parse_erc1155_transfers(request(params + "token1155tx"), addr));
-            return assets;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Etherscan exception in asset list: " + e);
-            throw new RuntimeException("Etherscan: failed to fetch asset list!");
-        }
+        String params = "module=account&address=" + addr + "&page=1&offset=" + MAX_RESULTS + "&sort=asc&action=";
+        List<Asset> assets = parse_token_transfers(request(params + "tokentx"), addr);
+        assets.addAll(parse_nft_transfers(request(params + "tokennfttx"), addr));
+        assets.addAll(parse_erc1155_transfers(request(params + "token1155tx"), addr));
+        return assets;
     }
 
     /*

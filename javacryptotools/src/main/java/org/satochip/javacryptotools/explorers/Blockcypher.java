@@ -14,11 +14,13 @@ import java.util.logging.Level;
 
 public class Blockcypher extends BaseExplorer implements Explorer{
 
-    public Blockcypher(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Blockcypher(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Blockcypher(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public String get_base_url(){
@@ -45,17 +47,16 @@ public class Blockcypher extends BaseExplorer implements Explorer{
         // https://www.blockcypher.com/dev/bitcoin/#address-api
         // https://api.blockcypher.com/v1/btc/main/addrs/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD/balance
         String url= get_base_url() + "addrs/" + addr + "/balance";
-        logger.info("JAVACRYPTOTOOLS: Blockcypher explorer  url: " + url);
+        logFine("request: " + url);
 
         HttpsClient client= new HttpsClient(url);
         String content= client.request();
-        logger.info("JAVACRYPTOTOOLS: Blockcypher request content: " + content);
+        logResponse(content);
 
         // parse json
         JSONObject reader = new JSONObject(content);
         double balanceSats= reader.getDouble("final_balance"); // TODO: unconfirmed_balance?
         double balance = balanceSats/100000000.0;
-        logger.info("JAVACRYPTOTOOLS: Blockcypher balance: " + balance);
         return balance;
     }
 

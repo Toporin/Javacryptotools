@@ -1,32 +1,23 @@
 package org.satochip.javacryptotools.explorers;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.cert.Certificate;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 
 public class HttpsClient{
-	
-    protected static final Logger logger = Logger.getLogger("org.satochip.javacryptotools");
-    
+
+    protected static final Logger logger = BaseExplorer.logger;
+
     public String https_url;
     public HashMap<String,String> headers = null;
     public int responseCode = -1; // HTTP status code of the last request, or -1 if unavailable
 
-   // public static void main(String[] args)
-   // {
-        // new HttpsClient().testIt();
-   // }
-	
     public HttpsClient(String https_url){
         this.https_url= https_url;
     }
@@ -34,144 +25,98 @@ public class HttpsClient{
         this.https_url= https_url;
         this.headers= headers;
     }
-    
+
+    // send a GET request, returns the response content, or an empty string (or null) on failure
     public String request(){
-        
-        String content=null;
-        URL url;
+        HttpsURLConnection con = null;
         try {
-
-             url = new URL(this.https_url);
-             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-
-             if(headers!=null){
-                 for (Map.Entry<String, String> entry : headers.entrySet()) {
-                     String key = entry.getKey();
-                     String value = entry.getValue();
-                     con.setRequestProperty(key, value);
-                     logger.warning("Using header pair: key: " +key + " value:" + value);
-                 }
-             }
-
-             //dump all cert info
-             //print_https_cert(con);
-                
-             //dump all the content
-             content= print_content(con);
-             responseCode= con.getResponseCode();
-			    
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            URL url = new URL(this.https_url);
+            con = (HttpsURLConnection)url.openConnection();
+            setHeaders(con);
+            String content = read_content(con);
+            if (responseCode == -1){
+                responseCode = getResponseCode(con);
+            }
+            return content;
         } catch (IOException e) {
-            e.printStackTrace();
+            logFailure(con, e);
+            return null;
         }
-        return content;
     }
-    
-    
-    // send a POST request with a json body
+
+    // send a POST request with a json body, returns the response content, or an empty string (or null) on failure
     public String post(String json_body){
-
-        String content=null;
+        HttpsURLConnection con = null;
         try {
-             URL url = new URL(this.https_url);
-             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-             con.setRequestMethod("POST");
-             con.setRequestProperty("Content-Type", "application/json");
-             if(headers!=null){
-                 for (Map.Entry<String, String> entry : headers.entrySet()) {
-                     con.setRequestProperty(entry.getKey(), entry.getValue());
-                 }
-             }
-             con.setDoOutput(true);
-             try (OutputStream os = con.getOutputStream()) {
-                 os.write(json_body.getBytes(StandardCharsets.UTF_8));
-             }
-
-             content= print_content(con);
-             responseCode= con.getResponseCode();
-
+            URL url = new URL(this.https_url);
+            con = (HttpsURLConnection)url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            setHeaders(con);
+            con.setDoOutput(true);
+            try (OutputStream os = con.getOutputStream()) {
+                os.write(json_body.getBytes(StandardCharsets.UTF_8));
+            }
+            String content = read_content(con);
+            if (responseCode == -1){
+                responseCode = getResponseCode(con);
+            }
+            return content;
         } catch (IOException e) {
-            e.printStackTrace();
+            logFailure(con, e);
+            return null;
         }
-        return content;
     }
 
-   // private void testIt(){
-
-      // String https_url = "https://www.google.com/";
-      // URL url;
-      // try {
-
-	     // url = new URL(https_url);
-	     // HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-			
-	     //dumpl all cert info
-	     // print_https_cert(con);
-			
-	     //dump all the content
-	     // print_content(con);
-			
-      // } catch (MalformedURLException e) {
-	     // e.printStackTrace();
-      // } catch (IOException e) {
-	     // e.printStackTrace();
-      // }
-
-   // }
-	
-   private void print_https_cert(HttpsURLConnection con){
-     
-        if(con!=null){
-                
-            try {
-                    
-                logger.info("JAVACRYPTOTOOLS: HttpsClient: Response Code : " + con.getResponseCode());
-                logger.info("JAVACRYPTOTOOLS: HttpsClient: Cipher Suite : " + con.getCipherSuite());
-                logger.info("JAVACRYPTOTOOLS: HttpsClient: \n");
-                            
-                Certificate[] certs = con.getServerCertificates();
-                for(Certificate cert : certs){
-                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Type : " + cert.getType());
-                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Hash Code : " + cert.hashCode());
-                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Public Key Algorithm : " + cert.getPublicKey().getAlgorithm());
-                    logger.info("JAVACRYPTOTOOLS: HttpsClient: Cert Public Key Format : " + cert.getPublicKey().getFormat());
-                }
-                        
-            } catch (SSLPeerUnverifiedException e) {
-                e.printStackTrace();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-
-        }
-   }
-	
-   private String print_content(HttpsURLConnection con){
-        String content=""; 
-        
-        if(con!=null){
-            try {
-               
-               logger.info("JAVACRYPTOTOOLS: HttpsClient: ****** Content of the URL ********");			
-               BufferedReader br = 
-                new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-                        
-               String input;
-                        
-               while ((input = br.readLine()) != null){
-                  logger.info("JAVACRYPTOTOOLS: HttpsClient: " + input);
-                  content+=input;
-               }
-               br.close();
-               logger.info("JAVACRYPTOTOOLS: HttpsClient: ****** Content end reached ********");		
-               
-            } catch (IOException e) {
-               e.printStackTrace();
+    // header values (e.g. API keys) must not be logged
+    private void setHeaders(HttpsURLConnection con){
+        if (headers != null){
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                con.setRequestProperty(entry.getKey(), entry.getValue());
             }
         }
-		return content;
-   }
-	
+    }
+
+    // returns an empty string if the response content cannot be read (e.g. HTTP error)
+    private String read_content(HttpsURLConnection con) {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+            String input;
+            while ((input = br.readLine()) != null){
+                content.append(input);
+            }
+        } catch (IOException e) {
+            logFailure(con, e);
+        }
+        return content.toString();
+    }
+
+    // returns -1 if there is no response (e.g. connection failure)
+    private static int getResponseCode(HttpsURLConnection con){
+        if (con == null){
+            return -1;
+        }
+        try {
+            return con.getResponseCode();
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+    // Only the host is logged: urls may contain API keys, and so may exception messages (which include the url).
+    private void logFailure(HttpsURLConnection con, IOException e){
+        String host;
+        try {
+            host = new URL(this.https_url).getHost();
+        } catch (IOException ex) {
+            host = "(invalid url)";
+        }
+        if (responseCode == -1){
+            responseCode = getResponseCode(con);
+        }
+        logger.warning("HttpsClient: request to " + host + " failed"
+                + (responseCode != -1 ? " with HTTP code " + responseCode : "")
+                + ": " + e.getClass().getSimpleName());
+    }
+
 }

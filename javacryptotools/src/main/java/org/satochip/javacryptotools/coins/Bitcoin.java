@@ -9,11 +9,13 @@ import java.util.logging.Level;
 
 public class Bitcoin extends BaseCoin {
 
-    public Bitcoin(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Bitcoin(boolean is_testnet, Map<String, String> apikeys, Level logLevel){
-        super(logLevel);
+        this(is_testnet, apikeys);
+    }
+    public Bitcoin(boolean is_testnet, Map<String, String> apikeys){
+        super();
         this.is_testnet = is_testnet;
 
         segwit_supported = true;
@@ -76,8 +78,8 @@ public class Bitcoin extends BaseCoin {
         token_supported= false;
         nft_supported= false;
 
-        explorers.add(new Blockstream(this, apikeys, logLevel));
-        priceExplorers.add(new Coingate(this, apikeys, logLevel));
+        explorers.add(new Blockstream(this, apikeys));
+        priceExplorers.add(new Coingate(this, apikeys));
     }
 
 }

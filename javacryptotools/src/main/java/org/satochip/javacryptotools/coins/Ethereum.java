@@ -14,11 +14,13 @@ import java.util.logging.Level;
 
 public class Ethereum extends BaseCoin {
 
-    public Ethereum(boolean is_testnet, Map<String, String> apikeys){
-        this(is_testnet, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Ethereum(boolean is_testnet, Map<String, String> apikeys, Level level){
-        super(level);
+        this(is_testnet, apikeys);
+    }
+    public Ethereum(boolean is_testnet, Map<String, String> apikeys){
+        super();
         this.is_testnet = is_testnet;
 
         segwit_supported = false;
@@ -80,8 +82,8 @@ public class Ethereum extends BaseCoin {
 
         token_supported= true;
         nft_supported= true;
-        explorers.add(new Blockscout(this, apikeys, level));
-        priceExplorers.add(new Coingate(this, apikeys, level));
+        explorers.add(new Blockscout(this, apikeys));
+        priceExplorers.add(new Coingate(this, apikeys));
     }
     
     // see https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java

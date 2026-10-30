@@ -14,11 +14,13 @@ import java.util.logging.Level;
 
 public class LitecoinSpace extends BaseExplorer implements Explorer{
 
-    public LitecoinSpace(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public LitecoinSpace(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public LitecoinSpace(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public String get_url(){
@@ -36,25 +38,20 @@ public class LitecoinSpace extends BaseExplorer implements Explorer{
     }
 
     public double get_balance(String addr){
-        try{
-            String url = get_url() + "/address/" + addr;
-            logger.info("JAVACRYPTOTOOLS: LitecoinSpace explorer  url: " + url);
+        String url = get_url() + "/address/" + addr;
+        logFine("request: " + url);
 
-            HttpsClient client= new HttpsClient(url);
-            String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: LitecoinSpace request content: " + content);
+        HttpsClient client= new HttpsClient(url);
+        String content= client.request();
+        logResponse(content);
 
-            // parse json
-            JSONObject reader = new JSONObject(content);
-            JSONObject chain_stats  = reader.getJSONObject("chain_stats");
-            long funded_txo_sum= chain_stats.getLong("funded_txo_sum");
-            long spent_txo_sum= chain_stats.getLong("spent_txo_sum");
-            double  balance= (double) (funded_txo_sum - spent_txo_sum)/(100000000);
-            return balance;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: LitecoinSpace exception in balance: " + e);
-            throw new RuntimeException("LitecoinSpace: failed to fetch balance!");
-        }
+        // parse json
+        JSONObject reader = new JSONObject(content);
+        JSONObject chain_stats  = reader.getJSONObject("chain_stats");
+        long funded_txo_sum= chain_stats.getLong("funded_txo_sum");
+        long spent_txo_sum= chain_stats.getLong("spent_txo_sum");
+        double  balance= (double) (funded_txo_sum - spent_txo_sum)/(100000000);
+        return balance;
     }
 
     public List<Asset> get_asset_list(String address){

@@ -52,11 +52,13 @@ public class Alchemy extends BaseExplorer implements Explorer{
         WEB_URLS = Collections.unmodifiableMap(urls);
     }
 
-    public Alchemy(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Alchemy(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Alchemy(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public String get_network(){
@@ -98,7 +100,7 @@ public class Alchemy extends BaseExplorer implements Explorer{
         if (content == null || content.isEmpty()){
             throw new RuntimeException("Alchemy: request failed with HTTP code " + client.responseCode);
         }
-        logger.info("JAVACRYPTOTOOLS: Alchemy response: " + content);
+        logResponse(content);
         return content;
     }
 
@@ -108,7 +110,7 @@ public class Alchemy extends BaseExplorer implements Explorer{
         if (content == null || content.isEmpty()){
             throw new RuntimeException("Alchemy: request failed with HTTP code " + client.responseCode);
         }
-        logger.info("JAVACRYPTOTOOLS: Alchemy response: " + content);
+        logResponse(content);
         return content;
     }
 
@@ -117,29 +119,20 @@ public class Alchemy extends BaseExplorer implements Explorer{
      */
 
     public double get_balance(String addr){
-        try {
-            String url = "https://" + get_network() + ".g.alchemy.com/v2/" + getApiKey();
-            JSONObject body = new JSONObject();
-            body.put("jsonrpc", "2.0");
-            body.put("id", 1);
-            body.put("method", "eth_getBalance");
-            body.put("params", new JSONArray().put(addr).put("latest"));
-            return parse_balance(post(url, body));
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Alchemy exception in balance: " + e);
-            throw new RuntimeException("Alchemy: failed to fetch balance!");
-        }
+        String url = "https://" + get_network() + ".g.alchemy.com/v2/" + getApiKey();
+        JSONObject body = new JSONObject();
+        body.put("jsonrpc", "2.0");
+        body.put("id", 1);
+        body.put("method", "eth_getBalance");
+        logFine("request: eth_getBalance " + addr);
+        body.put("params", new JSONArray().put(addr).put("latest"));
+        return parse_balance(post(url, body));
     }
 
     public List<Asset> get_asset_list(String addr){
-        try {
-            List<Asset> assets = get_token_list(addr);
-            assets.addAll(get_nft_list(addr));
-            return assets;
-        } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Alchemy exception in asset list: " + e);
-            throw new RuntimeException("Alchemy: failed to fetch asset list!");
-        }
+        List<Asset> assets = get_token_list(addr);
+        assets.addAll(get_nft_list(addr));
+        return assets;
     }
 
     public List<Asset> get_token_list(String addr){
@@ -159,6 +152,7 @@ public class Alchemy extends BaseExplorer implements Explorer{
             if (pageKey != null){
                 body.put("pageKey", pageKey);
             }
+            logFine("request: tokens by address " + addr + " (page " + (page + 1) + ")");
             JSONObject json = new JSONObject(post(url, body));
             assets.addAll(parse_token_list(json, addr));
             pageKey = json.getJSONObject("data").optString("pageKey", null);
@@ -175,6 +169,7 @@ public class Alchemy extends BaseExplorer implements Explorer{
         int page = 0;
         do {
             String url = (pageKey == null) ? baseUrl : baseUrl + "&pageKey=" + urlEncode(pageKey);
+            logFine("request: getNFTsForOwner " + addr + " (page " + (page + 1) + ")");
             JSONObject json = new JSONObject(get(url));
             assets.addAll(parse_nft_list(json, addr));
             pageKey = json.isNull("pageKey") ? null : json.optString("pageKey", null);
@@ -246,7 +241,7 @@ public class Alchemy extends BaseExplorer implements Explorer{
                             asset.rateCurrency = "USD";
                             asset.rateAvailable = true;
                         } catch (NumberFormatException e){
-                            logger.warning("JAVACRYPTOTOOLS: Alchemy failed to parse price: " + price);
+                            logWarning("failed to parse price: " + price);
                         }
                         break;
                     }

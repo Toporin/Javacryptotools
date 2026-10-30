@@ -10,11 +10,13 @@ import java.util.logging.Level;
 // Note: Coingate does not support Counterparty (XCP)
 public class Coingate extends BaseExplorer implements PriceExplorer{
 
-    public Coingate(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Coingate(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Coingate(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public String get_api_url(){
@@ -38,24 +40,22 @@ public class Coingate extends BaseExplorer implements PriceExplorer{
     }
 
     public double get_exchange_rate_between(String coin, String other_coin){
-        logger.info("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between START");
         //https://coingate.com/currencies
         try{
             // Coingate uses ISO Symbol for currencies
             String base_url = get_api_url();
             String url= base_url + "rates/merchant/" + coin + "/" + other_coin;
-            logger.info("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between url: " + url);
+            logFine("request: " + url);
 
             HttpsClient client= new HttpsClient(url);
             String content= client.request();
-            logger.info("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between content: " + content);
+            logResponse(content);
 
             // parse json
             double rate = Double.parseDouble(content);
-            logger.info("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between rate: " + rate);
             return rate;
         } catch (Exception e){
-            logger.warning("JAVACRYPTOTOOLS: Coingate get_exchange_rate_between exception: " + e);
+            logWarning("failed to get " + coin + "/" + other_coin + " rate: " + e);
             return (double)-1;
         }
     }

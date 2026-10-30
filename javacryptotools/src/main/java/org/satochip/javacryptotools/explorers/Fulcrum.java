@@ -53,11 +53,13 @@ public class Fulcrum extends BaseExplorer implements Explorer{
     }
     private static final int TIMEOUT_MS = 10000; // per server
 
-    public Fulcrum(BaseCoin coin, Map<String, String> apikeys){
-        this(coin, apikeys, Level.WARNING);
-    }
+    /** @deprecated the level is ignored: configure the logger from the application (see BaseCoin.LOGGER_NAME). */
+    @Deprecated
     public Fulcrum(BaseCoin coin, Map<String, String> apikeys, Level logLevel){
-        super(coin, apikeys, logLevel);
+        this(coin, apikeys);
+    }
+    public Fulcrum(BaseCoin coin, Map<String, String> apikeys){
+        super(coin, apikeys);
     }
 
     public List<String> get_servers(){
@@ -95,10 +97,12 @@ public class Fulcrum extends BaseExplorer implements Explorer{
             String host = server.substring(0, sep);
             int port = Integer.parseInt(server.substring(sep + 1));
             try {
-                logger.info("JAVACRYPTOTOOLS: Fulcrum RPC " + method + " to " + server);
-                return rpc_call_server(host, port, method, params);
+                logFine("request: " + method + " to " + server);
+                Object result = rpc_call_server(host, port, method, params);
+                logResponse(String.valueOf(result));
+                return result;
             } catch (IOException | RuntimeException e){ // includes socket, TLS and JSON errors
-                logger.warning("JAVACRYPTOTOOLS: Fulcrum failed to recover data from " + server + ": " + e);
+                logWarning("failed to recover data from " + server + ": " + e);
             }
         }
         throw new RuntimeException("Fulcrum: no server available for " + coin_symbol);
