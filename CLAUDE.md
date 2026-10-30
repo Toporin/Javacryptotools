@@ -68,6 +68,14 @@ Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attach
 3. Instantiate and attach appropriate `Explorer` / `PriceExplorer` objects to `this.explorers` / `this.priceExplorers`.
 4. Add SLIP44 path constant to `Constants.java`.
 
+### Logging conventions
+
+- All classes log to `BaseCoin.logger` (`org.satochip.javacryptotools`, java.util.logging). Never call `setLevel()` from library code: the application sets the level.
+- Use the helpers `logFine()`, `logWarning()` and `logResponse()` (truncated) from `BaseExplorer` / `BaseCoin`: messages are prefixed with `<Class> (<SYMBOL>): `.
+- `WARNING`: errors, logged once where they are handled (e.g. `BaseCoin` explorer fallback, price explorers returning -1). Explorers that throw do not log: let the original exception propagate.
+- `FINE`: debug info (request url, response, result). Never log API keys: log urls before appending the key, and never log request headers or `IOException` messages from `HttpsClient` (they contain the url).
+- No `System.out`, `printStackTrace` or `INFO` level.
+
 ### Adding a new explorer
 
 1. Extend `BaseExplorer` and implement `Explorer` and/or `PriceExplorer`.

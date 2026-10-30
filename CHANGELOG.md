@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Compile library to Java 8 bytecode for Android and older JVMs
 * Remove unused dependencies commons-math3 and slf4j-api (no longer pulled into consumer applications)
 * Fix Blockscout pagination on Android (JSONObject.keySet() is missing from Android's org.json)
+* Rework logging: the library no longer sets the logger level (constructors with a Level argument are deprecated and ignore it), errors are logged at WARNING and debug info at FINE, with a consistent format
+* Remove useless or unsafe traces: HTTP response dumps, request headers (could contain API keys), API keys in urls, System.out and printStackTrace calls
 
 ## [0.4.0]:
 

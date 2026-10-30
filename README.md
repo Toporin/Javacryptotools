@@ -132,6 +132,25 @@ JitPack builds the library on demand from GitHub, using the configuration in `ji
 3. open https://jitpack.io/#Toporin/Javacryptotools and click "Get it" for the new tag to trigger the build
    (or simply request the new version from a consumer project). Build logs are available on the same page.
 
+## Logging
+
+The library uses `java.util.logging` with the logger `org.satochip.javacryptotools`
+(constant `BaseCoin.LOGGER_NAME`). The library never sets the logger level: the application configures it,
+either on this logger or on a parent logger such as `org.satochip`. Levels used:
+
+* `WARNING`: errors, including third-party API failures (e.g. an explorer failing, with the fallback to the next one)
+* `FINE`: debug info (API requests, truncated responses, results)
+
+API keys are never logged. Example:
+
+```java
+Logger logger = Logger.getLogger("org.satochip.javacryptotools");
+logger.setLevel(Level.FINE); // or Level.WARNING for errors only, Level.OFF to disable
+```
+
+On Android, the default `java.util.logging` handler maps `FINE` to `Log.DEBUG`, which logcat may filter out:
+to display debug logs, add your own `Handler` (e.g. forwarding records to `android.util.Log` or to an in-app log).
+
 ## Tests
 
 Tests are located in `javacryptotools/src/test/java/javacryptotools/` and use JUnit 5.
