@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add network integration tests (./gradlew integrationTest) using API keys from api_keys.ini (template: api_keys(sample).ini)
 * Publish on JitPack (com.github.Toporin:Javacryptotools:<tag>): maven-publish configuration, jitpack.yml, Gradle wrapper tracked in git
 * Compile library to Java 8 bytecode for Android and older JVMs
+* Remove unused dependencies commons-math3 and slf4j-api (no longer pulled into consumer applications)
 * Fix Blockscout pagination on Android (JSONObject.keySet() is missing from Android's org.json)
 
 ## [0.4.0]:
