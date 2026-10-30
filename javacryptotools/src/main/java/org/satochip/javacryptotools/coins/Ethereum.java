@@ -35,8 +35,8 @@ public class Ethereum extends BaseCoin {
         wif_script_types.put("p2wsh-p2sh", 7);
         
         if (is_testnet){
-            coin_symbol = "ROP";
-            display_name = "Ropsten Testnet";
+            coin_symbol = "ETHTEST";
+            display_name = "Sepolia Testnet";
 
             magicbyte = 111;
             script_magicbyte = 196;

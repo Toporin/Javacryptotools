@@ -24,7 +24,7 @@ public class Etherscan extends BaseExplorer implements Explorer{
         if (this.coin_symbol.equals("ETH")){
             return "https://api.etherscan.io/api";
         } else {
-            return "https://api-ropsten.etherscan.io/api";
+            return "https://api-sepolia.etherscan.io/api";
         }
     }
     
@@ -33,7 +33,7 @@ public class Etherscan extends BaseExplorer implements Explorer{
         if (this.coin_symbol.equals("ETH")){
             web_url= "https://etherscan.io/address/"+addr ;
         } else {
-            web_url= "https://ropsten.etherscan.io/address/"+addr;
+            web_url= "https://sepolia.etherscan.io/address/"+addr;
         }
         return web_url;
     }
