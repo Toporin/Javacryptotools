@@ -29,7 +29,8 @@ Each coin can also have various *Explorer* objects attached to it. These explore
 Explorer classes use API from the following services:
 * [Blockstream](https://blockstream.com/)
 * Sochain](https://sochain.com/)
-* Fullstack](https://fullstack.cash/)
+* [Fulcrum](https://github.com/cculianu/Fulcrum) (Electrum protocol servers)
+* [Alchemy](https://www.alchemy.com/)
 * Etherscan](https://etherscan.io/)
 * Rarible](https://rarible.com/)
 * Opensea](https://opensea.io/)
@@ -42,7 +43,7 @@ See [api_keys(sample).ini](api_keys(sample).ini) for the list of supported keys,
 
 ```java
 HashMap<String, String> apikeys = new HashMap<>();
-apikeys.put("API_KEY_ETHERSCAN", "YOUR_ETHERSCAN_API_KEY"); // required for Polygon Amoy testnet
+apikeys.put("API_KEY_ALCHEMY", "YOUR_ALCHEMY_API_KEY"); // required for Polygon
 Polygon coin = new Polygon(true, apikeys);
 ```
 

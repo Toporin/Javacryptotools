@@ -54,7 +54,7 @@ apikeys.put("etherscan", "YOUR_KEY");
 Bitcoin coin = new Bitcoin(/*isTestnet=*/false, apikeys);
 ```
 
-Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream`; `Litecoin` attaches `Blockcypher` and `LitecoinSpace`; `Ethereum` attaches `Blockscout`; `Polygon` attaches `Blockscout` with an `Etherscan` fallback (mainnet) or `Etherscan` (Amoy testnet); `Counterparty` attaches `Tokenscan`). Price explorers are `Coingate`, or `CoinCombined` for Counterparty.
+Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream`; `Litecoin` attaches `Blockcypher` and `LitecoinSpace`; `Ethereum` attaches `Blockscout`; `Polygon` attaches `Alchemy` (requires `API_KEY_ALCHEMY`); `BitcoinCash` attaches `Fulcrum` (Electrum protocol over TLS); `Counterparty` attaches `Tokenscan`). Price explorers are `Coingate`, or `CoinCombined` for Counterparty.
 
 ### Adding a new coin
 
