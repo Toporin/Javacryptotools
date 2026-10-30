@@ -6,3 +6,7 @@ build
 .DS_Store
 gradle/
 /local.properties
+
+# API keys (see api_keys(sample).ini for the template)
+/api_keys*.ini
+!/api_keys(sample).ini
