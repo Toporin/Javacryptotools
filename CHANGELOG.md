@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update Gradle wrapper scripts to match Gradle 8.10
 * Enable verbose test logging
 * Add CLAUDE.md
+* Fix testnet flag (is_testnet) never being set: testnet coins now return an exchange rate of 0
+* Switch Ethereum testnet from Ropsten to Sepolia (breaking: symbol 'ROP' is now 'ETHTEST', display name 'Sepolia Testnet')
+* Add LitecoinSpace explorer: adds Litecoin testnet support and a fallback explorer for Litecoin mainnet
+* Fix token contract & explorer links in Blockscout explorer (API now uses 'address_hash')
+* Fix string comparison in Blockcypher explorer
+* Rework test suite: offline tests for all coins (mainnet & testnet), explorer urls, explorer fallback, token/NFT parsing and encodings
 
 ## [0.4.0]:
 

@@ -51,7 +51,7 @@ apikeys.put("etherscan", "YOUR_KEY");
 Bitcoin coin = new Bitcoin(/*isTestnet=*/false, apikeys);
 ```
 
-Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream` and `Blockcypher`; `Ethereum` attaches `Etherscan`, `Ethplorer`, `Blockscout`).
+Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attaches `Blockstream`; `Litecoin` attaches `Blockcypher` and `LitecoinSpace`; `Ethereum` and `Polygon` attach `Blockscout`; `Counterparty` attaches `Tokenscan`). Price explorers are `Coingate`, or `CoinCombined` for Counterparty.
 
 ### Adding a new coin
 
@@ -77,4 +77,12 @@ Each coin constructor wires up its appropriate explorers (e.g., `Bitcoin` attach
 
 ## Tests
 
-Tests live in `CoinTest.java` and use BIP39 test vectors derived from the seed `tonight stem cause eyebrow estate smart duck wrong toe under job danger` with path `m/84'/0'/0'/0/*`. Tests validate address generation (legacy + SegWit) and WIF private key encoding for Bitcoin, Litecoin, Bitcoin Cash, and Ethereum.
+Tests live in `src/test/java/javacryptotools/` and run offline (no network access):
+
+- `CoinTest`: address generation (SegWit, legacy, CashAddr, EIP-55) and WIF encoding for every coin on mainnet and testnet. Test vectors are in `TestVectors`, derived from the BIP39 seed `tonight stem cause eyebrow estate smart duck wrong toe under job danger`.
+- `CoinPropertiesTest`: coin metadata, attached explorers, address web urls, testnet exchange rates.
+- `ExplorerFallbackTest`: `BaseCoin` explorer fallback logic, using fake explorers.
+- `AssetParsingTest`: Blockscout/Tokenscan token & NFT parsing, using recorded API responses in `src/test/resources/`.
+- `EncodingTest`: Base58, Bech32, CashAddress and SLIP44 constants.
+
+When adding a coin, add it to the case lists in `CoinTest` and `CoinPropertiesTest`.
